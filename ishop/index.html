@@ -1,12 +1,108 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
+<!DOCTYPE html> 
+<html> 
+<head> 
+  <meta charset="utf-8" />
+  <title>Проба React</title>
+  <style>
+	.ProductTable {
+		margin: 0 auto;
+	}
+
+  	.ProductTable,
+    .ProductTable th,
+    .ProductTable td {
+		border: 1px solid #090440;
+		border-collapse: collapse;
+		text-align: center;
+		padding: 0.5em 1em;
+  	}
     
-</body>
+    .ProductTable caption {
+		font: 2em/1.5 serif;
+		margin-bottom: .5em;
+    }
+  </style>
+</head> 
+<body> 
+  <div id="container"></div> 
+      
+  <script src="https://unpkg.com/react@15/dist/react.js"></script> 
+  <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script> 
+      
+
+  <script>
+	window.addEventListener("DOMContentLoaded", renderMyFirstReactComponent, false);
+
+	var ProductTable = React.createClass({
+		displayName: 'ProductTableComponent',
+		render: function() {
+			var tableCaption = "Список товаров магазина " + this.props.shop;
+			var itemRecords = [];
+			var itemRec = 
+				React.DOM.tr( {key: 0}, // React "заставил" добавить key и здесь
+					React.DOM.th(null, "Название"),
+					React.DOM.th(null, "Цена, USD"),
+					React.DOM.th(null, "Фото"),
+					React.DOM.th(null, "Ед. в наличии")
+				); // шапка таблицы
+			itemRecords.push(itemRec); 
+			this.props.items.forEach(function(item){
+				itemRec = 
+					React.DOM.tr( {key: item.code},
+						React.DOM.td( null, item.item ),
+						React.DOM.td( null, item.price ),
+						React.DOM.td( null,
+							React.DOM.img( {src: item.photoUrl, width: "250"} ),
+						),
+            			React.DOM.td( null, item.quantity ),
+					);
+				itemRecords.push(itemRec);
+			});
+			return 	React.DOM.table( {className: "ProductTable"},
+						React.DOM.caption( null, 
+              				React.DOM.em( null, tableCaption ), // em не для стилизации, но для практики :)
+            			),
+						React.DOM.tbody( null, itemRecords),
+					);
+		} // end of render
+
+	}); // end of ProductTable
+
+	function renderMyFirstReactComponent() {
+		// данные для заполнения в компоненте
+		var shopName = "Baraholka";
+		// товары
+		var shopItems = [
+			{	code:1,
+				item: "Мобила",
+				price: 120,
+				photoUrl: "https://kanalmalatya.com/wp-content/uploads/2017/02/efsane-resmen-tanitildi-iste-yeni-3310-58b31884453c0.jpg",
+				quantity: 8,
+			},
+			{	code:2,
+				item: "Плазма",
+				price: 440,
+				photoUrl: "https://s00.yaplakal.com/pics/pics_original/3/8/7/8704783.jpg",
+				quantity: 4,
+			},
+			{	code:3,
+				item: "Акустика",
+				price: 990,
+				photoUrl: "http://pkinozal.ru/sites/default/files/kinozalu/bw_nautilus_3.jpg",
+				quantity: 1,
+			}
+		];
+
+		ReactDOM.render(
+			React.createElement(ProductTable, {shop: shopName, items: shopItems}),
+			document.getElementById('container')
+		);
+
+	} // end of renderMyFirstReactComponent
+	
+
+
+  </script>
+
+</body> 
 </html>
