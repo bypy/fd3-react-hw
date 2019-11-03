@@ -3,6 +3,15 @@
 <head> 
   <meta charset="utf-8" />
   <title>Фильтр</title>
+  <style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    #container {
+        margin: 8px;
+    }
+  </style>
 </head> 
 <body>
     <div id="container"></div>
@@ -11,13 +20,15 @@
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script> 
         
     <script src="FilteredSortableList.js"></script>
-    <!-- <link rel="stylesheet" type="text/css" href="FilterListComponent.css" /> -->
+    <link rel="stylesheet" type="text/css" href="FilterListComponent.css" />
 
     <script>
+        
         var opts = [
-            "люблю жену", "пишу на javascript", "учу английский" 
+            "усиливаться", "носильщики", "георгиевского", "сервировку",
+            "обобщениям", "обрызганного", "противоречивость", "прерываемый" 
         ];
-
+    
         keyCounter = 0;
         var optsWKeys = opts.map( v => ({
                 text:v, code:keyCounter++
@@ -25,7 +36,10 @@
         );
 
         ReactDOM.render(
-            React.createElement(FilteredSortableList, {listElements:optsWKeys}),
+            React.createElement(
+                FilteredSortableList,
+                {words: optsWKeys}
+            ),
             document.getElementById('container')
         );
     </script>
