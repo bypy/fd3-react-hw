@@ -1,0 +1,30 @@
+.AwesomeList .controlsGroup,
+.AwesomeList .viewGroup {
+    width: 100%;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.AwesomeList .controlsGroup .sortOpt,
+.AwesomeList .controlsGroup .filterString {
+    margin-right: 1ex;
+}
+
+.AwesomeList .controlsGroup .resetBtn {
+    margin-left: 1ex;
+}
+
+.AwesomeList .controlsGroup .filterString {
+    min-width: 60%;
+    margin-bottom: .5em;
+}
+
+.AwesomeList .viewGroup {
+    margin-top: .5em;
+}
+
+.AwesomeList .viewGroup .wordsList {
+    width: 100%;
+}
