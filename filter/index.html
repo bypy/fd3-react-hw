@@ -19,26 +19,21 @@
     <script src="https://unpkg.com/react@15/dist/react.js"></script> 
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script> 
         
-    <script src="FilteredSortableList.js"></script>
-    <link rel="stylesheet" type="text/css" href="FilterListComponent.css" />
+    <script src="FilterableSortableList.js"></script>
+    <link rel="stylesheet" type="text/css" href="FilterableSortableList.css" />
 
     <script>
         
         var opts = [
             "усиливаться", "носильщики", "георгиевского", "сервировку",
-            "обобщениям", "обрызганного", "противоречивость", "прерываемый" 
+            "обобщениям", "обрызганного", "противоречивость", "прерываемый", "фраза из нескольких слов",
+            "тест н@ спец$им<вол>ы!%?*"
         ];
-    
-        keyCounter = 0;
-        var optsWKeys = opts.map( v => ({
-                text:v, code:keyCounter++
-            })
-        );
 
         ReactDOM.render(
             React.createElement(
-                FilteredSortableList,
-                {inputWords: optsWKeys}
+                FilterableSortableList,
+                {inputWords: opts}
             ),
             document.getElementById('container')
         );
