@@ -4,10 +4,11 @@ var FilteredSortableList = React.createClass({
 
     propTypes: {
         words: React.PropTypes.array.isRequired,
+        startSortFlag: React.PropTypes.bool,
     },
 
     getInitialState: function() {
-        return { placeholder: 'Всё под контролем' };
+        return { placeholder: 'Всё под контролем', sortFlag: this.props.startSortFlag };
     },
 
     update: function(EO) {
@@ -16,6 +17,7 @@ var FilteredSortableList = React.createClass({
     },
 
     sortWords: function(EO) {
+        this.setState( {sortFlag: !this.state.sortFlag} );
         console.log('Фильтрация: ' + (EO.target.checked ? 'включена' : 'выключена') );
     },
 
@@ -32,8 +34,8 @@ var FilteredSortableList = React.createClass({
 
         return React.DOM.div( {className:'AwesomeList'},
             React.DOM.div( {className:'controlsGroup'},  
-                React.DOM.input( {type: 'checkbox', name: 'sorting', className: 'sortOpt', defaultChecked: false,
-                    onClick: this.sortWords} ),
+                React.DOM.input( {type: 'checkbox', name: 'sorting', className: 'sortOpt', checked: this.state.sortFlag||false,
+                    onChange: this.sortWords} ),
                 React.DOM.input( {type: 'text', name: 'filtering', className: 'filterString', value: this.state.placeholder,
                     onChange: this.update} ),
                 React.DOM.input( {type: 'button', className: 'resetBtn', defaultValue: 'Сброс',
