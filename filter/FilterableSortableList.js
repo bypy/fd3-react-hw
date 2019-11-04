@@ -6,28 +6,49 @@ var FilterableSortableList = React.createClass({
         startSortFlag: React.PropTypes.bool
     },
 
+    origlWordsH: null,
+
     getInitialState: function() {
         keyCounter = 0;
+        this.origlWordsH = this.props.inputWords.map(v => ({
+            str: v,
+            code: keyCounter++
+        }));
         return {
             filterStr: "",
             sortFlag: this.props.startSortFlag || false,
-            words: this.props.inputWords.map(v => ({
-                str: v,
-                code: keyCounter++
-            }))
+            words: this.origlWordsH,
         };
     },
 
-    update: function(EO) {
-        console.log("Теперь фильтр такой: " + EO.target.value);
-        this.setState({ filterStr: EO.target.value });
+    filterWords: function(EO) {
+        var filterChars = EO.target.value;
+        console.log("Теперь фильтр такой: " + filterChars);
+        this.setState({ filterStr: filterChars });
+        if (filterChars !== '') {
+            var re = new RegExp(filterChars);
+            this.setState( (prevState, props) => { 
+                return { words: prevState.words.filter(currWordH => re.test(currWordH.str)) };
+            });
+        }
     },
 
     sortWords: function(EO) {
-        this.setState({ sortFlag: !this.state.sortFlag });
-        console.log(
-            "Сортировка " + (EO.target.checked ? "включена" : "выключена")
-        );
+        var isChecked = EO.target.checked;
+        this.setState( ( prevState, props ) => {
+            console.log(
+                "Сортировка была " + (prevState.sortFlag ? "включена" : "выключена") +
+                ". Стала " + (isChecked ? "включена" : "выключена")
+            );
+            return { sortFlag: isChecked };
+        });
+        this.setState( (prevState, props) => {
+            if (isChecked) {
+                return { words: prevState.words.sort( (currWordH, nextWordH) => currWordH.str > nextWordH.str) }; 
+            } else {
+                return { words: this.origlWordsH };
+            }
+        });
     },
 
     reset: function(EO) {
@@ -36,17 +57,8 @@ var FilterableSortableList = React.createClass({
     },
 
     render: function() {
-        var wordsList = this.state.words;
 
-        if (this.state.sortFlag)
-            wordsList.sort((currWordH, nextWordH) => currWordH.str > nextWordH.str);
-
-        if (this.state.filterStr) {
-            var re = new RegExp(this.state.filterStr);
-            wordsList = wordsList.filter(currWordH => re.test(currWordH.str));
-        }
-
-        var optionElems = wordsList.map(v =>
+        var optionElems = this.state.words.map(v =>
             React.DOM.option(
                 { key: v.code, value: v.str.replace(/[\s\?\!\@\#\$\%\^\&\*\\\/\,\.\(\)<\>]/g, '') },
                 v.str
@@ -69,7 +81,7 @@ var FilterableSortableList = React.createClass({
                     name: "filtering",
                     className: "filterString",
                     value: this.state.filterStr,
-                    onChange: this.update
+                    onChange: this.filterWords
                 }),
                 React.DOM.input({
                     type: "button",
