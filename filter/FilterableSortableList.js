@@ -10,38 +10,39 @@ var FilterableSortableList = React.createClass({
         return {
             filterStr: "",
             sortFlag: this.props.startSortFlag || false,
-            words: this.props.inputWords,
+            words: this.props.inputWords, // states инициализированы
         };
     },
 
-    filterWords: function(EO) {
-        var filterChars = EO.target.value;
-        console.log("Теперь фильтр такой: " + filterChars);
-        this.setState( {filterStr: filterChars} );
-        if (filterChars) { // не пустая строка
-            var re = new RegExp(filterChars);
-            this.setState( {words: this.props.inputWords.filter(wordH => re.test(wordH.str))} );
+    processAction: function(EO) {
+        // Функция считывает состояние признаков в states, установленных при обработке событий на контролах.
+        // Согласно признаков выполняются необходимые операции (фильтрация, сортировка) и обновляется states
+        var rebuildWordList = () => {
+            var workingWordArr = this.state.filterStr 
+                ? this.props.inputWords.filter(word => new RegExp(this.state.filterStr).test(word)) // фильтруем список
+                : this.props.inputWords.filter(el => true); // либо копируем полностью исходный массив из props
+            
+            if (this.state.sortFlag) // сортируем список, если необходимо
+                workingWordArr.sort((currWord, nextWord) => currWord > nextWord);
+            
+            this.setState( {words: workingWordArr} );
+        };
+        
+        switch (EO.target.name) {
+            case "sort":
+                this.setState( {sortFlag: EO.target.checked}, rebuildWordList );
+                console.log(`Сортировка в состоянии ${EO.target.checked ? "включена" : "выключена"}`);
+                break;
+            case "filter":
+                this.setState( {filterStr: EO.target.value}, rebuildWordList );
+                console.log(`Теперь фильтр такой: ${EO.target.value}`);
+                break;
+            case "reset":
+                this.setState( this.getInitialState(), rebuildWordList );
+                console.log("Сброс к начальному состоянию");
+                break;
         }
-    },
 
-    sortWords: function(EO) {
-        var bufferArrayForSorting = [];
-        var isChecked = EO.target.checked;
-        console.log(`Сортировка в состоянии ${isChecked ? "включена" : "выключена"}`);
-        this.setState( {sortFlag: isChecked} );
-        if(isChecked){
-            // bufferArrayForSorting = this.props.inputWords; // Так меняются пропсы после сортировки
-            this.props.inputWords.forEach( el => bufferArrayForSorting.push(el) );
-            bufferArrayForSorting.sort((currWord, nextWord) => currWord > nextWord);
-            this.setState( {words: bufferArrayForSorting} );
-        } else {
-            this.setState( {words: this.props.inputWords} ); 
-        }
-    },
-
-    reset: function(EO) {
-        console.log("Сброс к начальному состоянию");
-        this.setState(this.getInitialState());
     },
 
     render: function() {
@@ -59,23 +60,24 @@ var FilterableSortableList = React.createClass({
                 { className: "controlsGroup" },
                 React.DOM.input({
                     type: "checkbox",
-                    name: "sorting",
+                    name: "sort",
                     className: "sortOpt",
                     checked: this.state.sortFlag,
-                    onChange: this.sortWords
+                    onChange: this.processAction,
                 }),
                 React.DOM.input({
                     type: "text",
-                    name: "filtering",
+                    name: "filter",
                     className: "filterString",
                     value: this.state.filterStr,
-                    onChange: this.filterWords
+                    onChange: this.processAction
                 }),
                 React.DOM.input({
                     type: "button",
+                    name: "reset",
                     className: "resetBtn",
                     defaultValue: "Сброс",
-                    onClick: this.reset
+                    onClick: this.processAction,
                 })
             ),
             React.DOM.div(
