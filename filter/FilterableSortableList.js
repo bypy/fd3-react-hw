@@ -6,49 +6,37 @@ var FilterableSortableList = React.createClass({
         startSortFlag: React.PropTypes.bool
     },
 
-    origlWordsH: null,
-
     getInitialState: function() {
-        keyCounter = 0;
-        this.origlWordsH = this.props.inputWords.map(v => ({
-            str: v,
-            code: keyCounter++
-        }));
         return {
             filterStr: "",
             sortFlag: this.props.startSortFlag || false,
-            words: this.origlWordsH,
+            words: this.props.inputWords,
         };
     },
 
     filterWords: function(EO) {
         var filterChars = EO.target.value;
         console.log("Теперь фильтр такой: " + filterChars);
-        this.setState({ filterStr: filterChars });
-        if (filterChars !== '') {
+        this.setState( {filterStr: filterChars} );
+        if (filterChars) { // не пустая строка
             var re = new RegExp(filterChars);
-            this.setState( (prevState, props) => { 
-                return { words: prevState.words.filter(currWordH => re.test(currWordH.str)) };
-            });
+            this.setState( {words: this.props.inputWords.filter(wordH => re.test(wordH.str))} );
         }
     },
 
     sortWords: function(EO) {
+        var bufferArrayForSorting = [];
         var isChecked = EO.target.checked;
-        this.setState( ( prevState, props ) => {
-            console.log(
-                "Сортировка была " + (prevState.sortFlag ? "включена" : "выключена") +
-                ". Стала " + (isChecked ? "включена" : "выключена")
-            );
-            return { sortFlag: isChecked };
-        });
-        this.setState( (prevState, props) => {
-            if (isChecked) {
-                return { words: prevState.words.sort( (currWordH, nextWordH) => currWordH.str > nextWordH.str) }; 
-            } else {
-                return { words: this.origlWordsH };
-            }
-        });
+        console.log(`Сортировка в состоянии ${isChecked ? "включена" : "выключена"}`);
+        this.setState( {sortFlag: isChecked} );
+        if(isChecked){
+            // bufferArrayForSorting = this.props.inputWords; // Так меняются пропсы после сортировки
+            this.props.inputWords.forEach( el => bufferArrayForSorting.push(el) );
+            bufferArrayForSorting.sort((currWord, nextWord) => currWord > nextWord);
+            this.setState( {words: bufferArrayForSorting} );
+        } else {
+            this.setState( {words: this.props.inputWords} ); 
+        }
     },
 
     reset: function(EO) {
@@ -57,11 +45,11 @@ var FilterableSortableList = React.createClass({
     },
 
     render: function() {
-
-        var optionElems = this.state.words.map(v =>
+        var keyCounter = 0;
+        var optionElems = this.state.words.map( word => 
             React.DOM.option(
-                { key: v.code, value: v.str.replace(/[\s\?\!\@\#\$\%\^\&\*\\\/\,\.\(\)<\>]/g, '') },
-                v.str
+                { key: ++keyCounter, value: word.replace(/[\s\?\!\@\#\$\%\^\&\*\\\/\,\.\(\)<\>]/g, '') },
+                word
             )
         );
 
