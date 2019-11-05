@@ -23,7 +23,14 @@ var FilterableSortableList = React.createClass({
                 : this.props.inputWords.filter(el => true); // либо копируем полностью исходный массив из props
             
             if (this.state.sortFlag) // сортируем список, если необходимо
-                workingWordArr.sort((currWord, nextWord) => currWord > nextWord);
+                //workingWordArr.sort((currWord, nextWord) => currWord > nextWord); // FIREFOX ONLY
+                workingWordArr.sort((currWord, nextWord) => {
+                    if (currWord.toLowerCase() > nextWord.toLowerCase())
+                        return 1;
+                    else if (currWord.toLowerCase() < nextWord.toLowerCase())
+                        return -1;
+                    return 0;
+                });
             
             this.setState( {words: workingWordArr} );
         };
