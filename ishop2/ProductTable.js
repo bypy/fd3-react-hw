@@ -1,41 +1,47 @@
-var ProductTable = React.createClass({
+let ProductTable = React.createClass({
 
     displayName: 'ProductTableComponent',
 
     propTypes: {
+        className: React.PropTypes.string,
         name: React.PropTypes.string,
-        
-    }
+        items: React.PropTypes.arrayOf(
+            React.PropTypes.shape({
+                name: React.PropTypes.string.isRequired,
+                price: React.PropTypes.number.isRequired,
+                url: React.PropTypes.string.isRequired,
+                quantity: React.PropTypes.number.isRequired,
+            })
+        ),
 
-    render: function() {
-        var tableCaption = "Список товаров магазина " + this.props.shop;
-        var itemRecords = [];
-        var itemRec = 
-            React.DOM.tr( {key: 0}, // React "заставил" добавить key и здесь
-                React.DOM.th(null, "Название"),
-                React.DOM.th(null, "Цена, USD"),
-                React.DOM.th(null, "Фото"),
-                React.DOM.th(null, "Ед. в наличии")
-            ); // шапка таблицы
-        itemRecords.push(itemRec); 
-        this.props.items.forEach(function(item){
-            itemRec = 
-                React.DOM.tr( {key: item.code},
-                    React.DOM.td( null, item.item ),
-                    React.DOM.td( null, item.price ),
-                    React.DOM.td( null,
-                        React.DOM.img( {src: item.photoUrl, width: "250"} ),
-                    ),
-                    React.DOM.td( null, item.quantity ),
-                );
-            itemRecords.push(itemRec);
-        });
-        return 	React.DOM.table( {className: "ProductTable"},
-                    React.DOM.caption( null, 
-                          React.DOM.em( null, tableCaption ), // em не для стилизации, но для практики :)
-                    ),
-                    React.DOM.tbody( null, itemRecords),
-                );
+    },
+
+    render: function () {
+        let tableCaption = 'Список товаров магазина ';
+        this.props.name
+            ? tableCaption.concat('Список товаров магазина ', this.props.name)
+            : tableCaption.concat('Список товаров магазина ', 'iShop');
+        let keyCode = 1;
+        let tableRows = this.props.items.map( v =>
+            React.DOM.tr({ key: keyCode++ },
+                React.DOM.td({className:'tal'}, v.name),
+                React.DOM.td(null, v.price),
+                React.DOM.td({className:'tal'}, v.url),
+                React.DOM.td(null, v.quantity),
+            )
+        );
+        let tableHead = React.DOM.tr({ key: 0 },
+            React.DOM.th({'data-type':'name'}, "Название"),
+            React.DOM.th({'data-type':'cost'}, "Цена, USD"),
+            React.DOM.th({'data-type':'url'}, "Ссылка"),
+            React.DOM.th({'data-type':'count'}, "Ед. в наличии")
+        ); // шапка таблицы
+        tableRows.unshift(tableHead);
+
+        return React.DOM.table({ className: (this.props.className || null) },
+            React.DOM.caption(null, tableCaption),
+            React.DOM.tbody(null, tableRows),
+        );
     } // end of render
 
 }); // end of ProductTable

@@ -13,24 +13,6 @@
         #container {
             margin: 8px;
         }
-
-        .ProductTable {
-            margin: 0 auto;
-        }
-
-        .ProductTable,
-        .ProductTable th,
-        .ProductTable td {
-            border: 1px solid #090440;
-            border-collapse: collapse;
-            text-align: center;
-            padding: 0.5em 1em;
-        }
-
-        .ProductTable caption {
-            font: 2em/1.5 serif;
-            margin-bottom: .5em;
-        }
     </style>
 </head>
 
@@ -49,55 +31,54 @@
         (() => {
             'use strict';
 
-                // данные для заполнения в компоненте
-                var shopName = 'ishop2';
-                // товары
-                var shopItems = [
-                    {
-                        name: 'product1',
-                        price: 30,
-                        url: 'http://aaa.com',
-                        quantity: 20,
-                    },
-                    {
-                        name: 'product2',
-                        price: 40,
-                        url: 'http://bbb.com',
-                        quantity: 15,
-                    },
-                    {
-                        name: 'product3',
-                        price: 80,
-                        url: 'http://ccc.com',
-                        quantity: 49,
-                    },
-                    {
-                        name: 'product4',
-                        price: 90,
-                        url: 'http://ddd.com',
-                        quantity: 8,
-                    },
-                    {
-                        name: 'product5',
-                        price: 120,
-                        url: 'http://eee.com',
-                        quantity: 22,
-                    },
-                    {
-                        name: 'product6',
-                        price: 50,
-                        url: 'http://fff.com',
-                        quantity: 3,
-                    },
-                ];
+            // данные для заполнения в компоненте
+            let shopName = 'ishop2';
+            // Класс для стилизации таблицы
+            let tableStylingClass = 'ProductTable';
+            // товары
+            let shopItems = [
+                {
+                    name: 'product1',
+                    price: 30,
+                    url: 'http://aaa.com',
+                    quantity: 20,
+                },
+                {
+                    name: 'product2',
+                    price: 40,
+                    url: 'http://bbb.com',
+                    quantity: 15,
+                },
+                {
+                    name: 'newproduct3',
+                    price: 80,
+                    url: 'http://ccc.com',
+                    quantity: 49,
+                },
+                {
+                    name: 'product4',
+                    price: 90,
+                    url: 'http://ddd.com',
+                    quantity: 8,
+                },
+                {
+                    name: 'product5',
+                    price: 120,
+                    url: 'http://eee.com',
+                    quantity: 22,
+                },
+                {
+                    name: 'product6',
+                    price: 50,
+                    url: 'http://fff.com',
+                    quantity: 3,
+                },
+            ];
 
-                ReactDOM.render(
-                    React.createElement(ProductTable, { name: shopName, items: shopItems }),
-                    document.getElementById('container')
-                );
-
-
-
+            ReactDOM.render(
+                React.createElement(ProductTable, { className: tableStylingClass, name: shopName, items: shopItems }),
+                document.getElementById('container')
+            );
 
         })();
     </script>

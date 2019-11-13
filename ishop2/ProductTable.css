@@ -1,0 +1,34 @@
+.ProductTable {
+    margin: 0 auto;
+}
+
+.ProductTable,
+.ProductTable th,
+.ProductTable td {
+    border: 1px solid #090440;
+    border-collapse: collapse;
+    text-align: center;
+    padding: 0.5em 1em;
+}
+
+.ProductTable caption {
+    font: 2em/1.5 serif;
+    margin-bottom: .5em;
+}
+
+.ProductTable th[data-type='name'] {
+    width: 10em;
+}
+
+.ProductTable th[data-type='count'],
+.ProductTable th[data-type='price'] {
+    width: 3em;
+}
+
+.ProductTable th[data-type='url'] {
+    width: 15em;
+}
+
+.ProductTable .tal {
+    text-align-last: left;
+}
