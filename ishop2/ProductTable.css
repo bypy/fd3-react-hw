@@ -32,3 +32,11 @@
 .ProductTable .tal {
     text-align-last: left;
 }
+
+.ProductTable .highlight {
+    background-color: #f00;
+}
+
+.ProductTable td input {
+    width: 100%;
+}

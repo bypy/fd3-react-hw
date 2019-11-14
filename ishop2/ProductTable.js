@@ -13,7 +13,18 @@ let ProductTable = React.createClass({
                 quantity: React.PropTypes.number.isRequired,
             })
         ),
+        selectedClassName: React.PropTypes.string,
+    },
 
+    getInitialState: function() {
+        return {
+            selectedItemCode: null,
+        }
+    },
+
+    clicked: function (EO) {
+        let selectedItemCode = parseInt(EO.target.getAttribute('data-code'));
+        this.setState({selectedItemCode: selectedItemCode});
     },
 
     render: function () {
@@ -21,21 +32,28 @@ let ProductTable = React.createClass({
         this.props.name
             ? tableCaption.concat('Список товаров магазина ', this.props.name)
             : tableCaption.concat('Список товаров магазина ', 'iShop');
-        let keyCode = 1;
-        let tableRows = this.props.items.map( v =>
-            React.DOM.tr({ key: keyCode++ },
-                React.DOM.td({className:'tal'}, v.name),
-                React.DOM.td(null, v.price),
-                React.DOM.td({className:'tal'}, v.url),
-                React.DOM.td(null, v.quantity),
-            )
-        );
-        let tableHead = React.DOM.tr({ key: 0 },
-            React.DOM.th({'data-type':'name'}, "Название"),
-            React.DOM.th({'data-type':'cost'}, "Цена, USD"),
-            React.DOM.th({'data-type':'url'}, "Ссылка"),
-            React.DOM.th({'data-type':'count'}, "Ед. в наличии")
+
+        let keyCode = 0;
+        let tableHead = React.DOM.tr({ key: keyCode },
+            React.DOM.th({ 'data-type': 'name' }, "Название"),
+            React.DOM.th({ 'data-type': 'cost' }, "Цена, USD"),
+            React.DOM.th({ 'data-type': 'url' }, "Ссылка"),
+            React.DOM.th({ 'data-type': 'count' }, "Ед. в наличии"),
+            React.DOM.th({ 'data-type': 'control' }, "Управление"),
         ); // шапка таблицы
+        let tableRows = this.props.items.map(v => 
+            React.DOM.tr({ key: ++keyCode, className:(this.state.selectedItemCode === keyCode
+                                                        ? (this.props.selectedClassName || "highlight")
+                                                        : null )},
+                        React.DOM.td({ className: 'tal' }, v.name),
+                        React.DOM.td(null, v.price),
+                        React.DOM.td({ className: 'tal' }, v.url),
+                        React.DOM.td(null, v.quantity),
+                        React.DOM.td(null,
+                            React.DOM.input({ type: 'button', 'data-code': keyCode, onClick: this.clicked, value: "Delete" })
+                        ),
+                    )
+        );
         tableRows.unshift(tableHead);
 
         return React.DOM.table({ className: (this.props.className || null) },
