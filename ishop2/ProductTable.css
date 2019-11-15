@@ -2,6 +2,14 @@
     margin: 0 auto;
 }
 
+.ProductTable td {
+    cursor: cell;
+}
+
+.ProductTable th {
+    cursor: default;
+}
+
 .ProductTable,
 .ProductTable th,
 .ProductTable td {
@@ -39,4 +47,5 @@
 
 .ProductTable td input {
     width: 100%;
+    cursor: pointer;
 }
