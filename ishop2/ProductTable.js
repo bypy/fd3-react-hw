@@ -3,7 +3,7 @@ let ProductTable = React.createClass({
     displayName: 'ProductTableComponent',
 
     propTypes: {
-        className: React.PropTypes.string,
+        tableClassName: React.PropTypes.string,
         name: React.PropTypes.string,
         items: React.PropTypes.arrayOf(
             React.PropTypes.shape({
@@ -13,7 +13,6 @@ let ProductTable = React.createClass({
                 quantity: React.PropTypes.number.isRequired,
             })
         ),
-        selectedClassName: React.PropTypes.string,
     },
 
     getInitialState: function () {
@@ -23,62 +22,58 @@ let ProductTable = React.createClass({
         }
     },
 
-    clicked: function (EO) {
-        this.setState({ selectedItemCode: this.getItemCode(EO.target) });
+    clicked: function (code) {
+        this.setState({ selectedItemCode: code });
     },
 
-    delete: function (EO) {
-        EO.stopPropagation();
-        let indexToDelete = this.getItemCode(EO.target);
+    delete: function (code) {
         let newTableStuff = this.state.stuff.filter((el, i) => {
-            if (i === indexToDelete) return false;
+            if (i === code) return false;
             else return true;
         });
         this.setState({ stuff: newTableStuff, selectedItemCode: null });
     },
 
-    getItemCode: function (searchTag) {
-        while (searchTag.nodeName !== 'TR') searchTag = searchTag.parentNode;
-        return parseInt(searchTag.getAttribute('data-code'));
+    deselect: function(EO) {
+        this.setState({ selectedItemCode: null });
     },
 
     render: function () {
-        let tableCaption = 'Список товаров магазина ';
-        this.props.name
-            ? tableCaption.concat('Список товаров магазина ', this.props.name)
-            : tableCaption.concat('Список товаров магазина ', 'iShop');
+        let selectedClassName = 'highlight';
+        let alignedClassName = 'tal';
+        let tableCaption = this.props.name
+            ? 'Список товаров магазина ' + this.props.name
+            : 'Список товаров магазина ' + 'iShop';
 
-        let keyCode = -1;
-        let tableHead = React.DOM.tr({ key: keyCode },
+        let keyCode = -1; // keyCode первого товара будет равен 0 И своему индексу в массиве stuff
+        let tableHead = React.DOM.tr({ key: keyCode, onClick:this.deselect },
+            // шапка таблицы
             React.DOM.th({ 'data-type': 'name' }, "Название"),
             React.DOM.th({ 'data-type': 'cost' }, "Цена, USD"),
             React.DOM.th({ 'data-type': 'url' }, "Ссылка"),
             React.DOM.th({ 'data-type': 'count' }, "Ед. в наличии"),
             React.DOM.th({ 'data-type': 'control' }, "Управление"),
-        ); // шапка таблицы
+        );
         let tableRows = this.state.stuff.map(v =>
-            React.DOM.tr({
+            React.createElement(ProductRecord, {
                 key: ++keyCode,
-                'data-code': keyCode,
-                className: (this.state.selectedItemCode === keyCode
-                    ? (this.props.selectedClassName || "highlight")
-                    : null),
-                onClick: this.clicked,
+                code: keyCode,
+                name: v.name,
+                price: v.price,
+                url: v.url,
+                quantity: v.quantity,
+                selectedClassName: selectedClassName,
+                alignedClassName: alignedClassName,
+                selectedItemCode: this.state.selectedItemCode,
+                cbClicked: this.clicked,
+                cbDelete: this.delete,
             },
-                React.DOM.td({ className: 'tal' }, v.name),
-                React.DOM.td(null, v.price),
-                React.DOM.td({ className: 'tal' }, v.url),
-                React.DOM.td(null, v.quantity),
-                React.DOM.td(null,
-                    React.DOM.input({ type: 'button', onClick: this.delete, value: "Delete" })
-                ),
             )
         );
-        tableRows.unshift(tableHead);
 
-        return React.DOM.table({ className: (this.props.className || null) },
+        return React.DOM.table({ className: (this.props.tableClassName || null) },
             React.DOM.caption(null, tableCaption),
-            React.DOM.tbody(null, tableRows),
+            React.DOM.tbody(null, tableHead, tableRows),
         );
     } // end of render
 
