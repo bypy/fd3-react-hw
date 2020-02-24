@@ -15,7 +15,7 @@ let tableStylingClass = 'ProductTable';
 ReactDOM.render(
   <ProductTable
     tableClassName={tableStylingClass}
-    name={shopName}
+    shopName={shopName}
     items={shopItems}
   />
   , document.getElementById('container')

@@ -19,7 +19,11 @@ class ProductRecord extends React.Component {
     };
 
     recordClicked = (EO) => {
-        this.props.cbClicked(this.props.code);
+        this.props.cbClicked({
+            code: this.props.code,
+            name: this.props.name,
+            price: this.props.price,
+        });
     };
 
     recordDelete = (EO) => {

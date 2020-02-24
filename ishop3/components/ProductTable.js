@@ -1,8 +1,13 @@
 const React = require('react');
+const {Fragment} = require('react');
 const PropTypes = require('prop-types');
 
-// вложенный компонент ProductRecord
+// вложенные компоненты
 const ProductRecord = require('./ProductRecord');
+const ProductCard = require('./ProductCard');
+
+const selectedClassName = 'highlight';
+const alignedClassName = 'tal';
 
 require('./ProductTable.css');
 class ProductTable extends React.Component {
@@ -15,18 +20,22 @@ class ProductTable extends React.Component {
                 name: PropTypes.string.isRequired,
                 price: PropTypes.number.isRequired,
                 url: PropTypes.string.isRequired,
-                quantity: PropTypes.number.isRequired,
+                quantity: PropTypes.number.isRequired
             })
         ),
     };
 
     state = {
-        selectedItemCode: null,
-        stuff: this.props.items,
+        workMode: null,
+        selectedItem: {},
+        stuff: this.props.items
     };
 
-    clicked = (code) => {
-        this.setState({ selectedItemCode: code });
+    clicked = (clikedItem) => {
+        this.setState({
+            workMode: 0,
+            selectedItem: clikedItem,
+        });
     };
     
     delete = (code) => {
@@ -34,16 +43,26 @@ class ProductTable extends React.Component {
             if (i === code) return false;
             else return true;
         });
-        this.setState({ stuff: newTableStuff, selectedItemCode: null });
+        this.setState({ 
+            stuff: newTableStuff,
+            workMode: null,
+            selectedItem: { 
+                code: null
+            }
+        });
     };
     
     deselect = (EO) => {
-        this.setState({ selectedItemCode: null });
+        this.setState({
+            workMode: null,
+            selectedItem: { 
+                code: null
+            }
+        });
     };
 
     render() {
-        let selectedClassName = 'highlight';
-        let alignedClassName = 'tal';
+
         let tableCaption = this.props.name
             ? 'Список товаров магазина ' + this.props.name
             : 'Список товаров магазина ' + 'iShop';
@@ -59,7 +78,7 @@ class ProductTable extends React.Component {
             </tr>
         ;
 
-        let tableRows = this.state.stuff.map(v =>
+        let tableBody = this.state.stuff.map(v =>
             <ProductRecord
                 key = {++keyCode}
                 code = {keyCode}
@@ -69,20 +88,32 @@ class ProductTable extends React.Component {
                 quantity = {v.quantity}
                 selectedClassName = {selectedClassName}
                 alignedClassName = {alignedClassName}
-                selectedItemCode = {this.state.selectedItemCode}
+                selectedItemCode = {this.state.selectedItem.code}
                 cbClicked = {this.clicked}
                 cbDelete = {this.delete}
             />
         );
 
         return (
-            <table className = {this.props.tableClassName || null} >
-                <caption>{tableCaption}</caption>
-                { tableHead }
-                { tableRows }
-            </table>
-        )
-        ;
+            <Fragment>
+                <table className = {this.props.tableClassName || null} >
+                    <caption>{tableCaption}</caption>
+                    <thead>
+                        { tableHead }
+                    </thead>
+                    <tbody>
+                        { tableBody }
+                    </tbody>
+                </table>
+                {
+                    (this.state.workMode === 0) &&
+                    <ProductCard
+                        name = { this.state.selectedItem.name }
+                        price = { this.state.selectedItem.price }
+                    />
+                }
+            </Fragment>
+        );
     }
 
 }

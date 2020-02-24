@@ -3,36 +3,42 @@
     "name": "product1",
     "price": 30,
     "url": "http://aaa.com",
-    "quantity": 20
+    "quantity": 20,
+    "description": "lorem product1"
   },
   {
     "name": "product2",
     "price": 40,
     "url": "http://bbb.com",
-    "quantity": 15
+    "quantity": 15,
+    "description": "lorem product2"
   },
   {
     "name": "newproduct3",
     "price": 80,
     "url": "http://ccc.com",
-    "quantity": 49
+    "quantity": 49,
+    "description": "lorem newproduct3"
   },
   {
     "name": "product4",
     "price": 90,
     "url": "http://ddd.com",
-    "quantity": 8
+    "quantity": 8,
+    "description": "lorem product4"
   },
   {
     "name": "product5",
     "price": 120,
     "url": "http://eee.com",
-    "quantity": 22
+    "quantity": 22,
+    "description": "lorem product5"
   },
   {
     "name": "product6",
     "price": 50,
     "url": "http://fff.com",
-    "quantity": 3
+    "quantity": 3,
+    "description": "lorem product6"
   }
 ]
