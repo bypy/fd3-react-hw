@@ -2,7 +2,8 @@
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
-}.ProductTable {
+}.ProductTable,
+.ProductTable + .cardWrapper {
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
@@ -56,4 +57,7 @@
     cursor: pointer;
 }
 
+.ProductTable + .cardWrapper {
+    margin-top: 1em;
+}
 /*# sourceMappingURL=bundle.css.map*/

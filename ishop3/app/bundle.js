@@ -32870,6 +32870,15 @@ var ProductTable = function (_React$Component) {
                     code: null
                 }
             });
+        }, _this.addNew = function () {
+            _this.setState({
+                workMode: 1
+            });
+        }, _this.edit = function (editItem) {
+            _this.setState({
+                workMode: 2,
+                selectedItem: editItem
+            });
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -32923,7 +32932,8 @@ var ProductTable = function (_React$Component) {
                     alignedClassName: alignedClassName,
                     selectedItemCode: _this2.state.selectedItem.code,
                     cbClicked: _this2.clicked,
-                    cbDelete: _this2.delete
+                    cbDelete: _this2.delete,
+                    cbEdit: _this2.edit
                 });
             });
 
@@ -32949,10 +32959,25 @@ var ProductTable = function (_React$Component) {
                         tableBody
                     )
                 ),
-                this.state.workMode === 0 && React.createElement(ProductCard, {
-                    name: this.state.selectedItem.name,
-                    price: this.state.selectedItem.price
-                })
+                React.createElement(
+                    'div',
+                    { className: "cardWrapper" },
+                    this.state.workMode !== 1 && this.state.workMode !== 2 && React.createElement('input', { type: 'button', onClick: this.addNew, value: 'New product' }),
+                    this.state.workMode === 0 && React.createElement(ProductCard, {
+                        name: this.state.selectedItem.name,
+                        price: this.state.selectedItem.price
+                    }),
+                    this.state.workMode === 1 && React.createElement(
+                        'p',
+                        null,
+                        '\u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u043D\u043E\u0432\u043E\u0433\u043E \u0442\u043E\u0432\u0430\u0440\u0430 \u0437\u0434\u0435\u0441\u044C'
+                    ),
+                    this.state.workMode === 2 && React.createElement(
+                        'p',
+                        null,
+                        '\u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u0443\u0435\u043C\u043E\u0433\u043E \u0442\u043E\u0432\u0430\u0440\u0430 \u0437\u0434\u0435\u0441\u044C'
+                    )
+                )
             );
         }
     }]);
@@ -33699,6 +33724,15 @@ var ProductRecord = function (_React$Component) {
         }, _this.recordDelete = function (EO) {
             EO.stopPropagation();
             if (confirm('\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u044C \u043E \u0442\u043E\u0432\u0430\u0440\u0435 ' + _this.props.name + '?')) _this.props.cbDelete(_this.props.code);else return;
+        }, _this.recordEdit = function (EO) {
+            EO.stopPropagation();
+            _this.props.cbEdit({
+                code: _this.props.code,
+                name: _this.props.name,
+                price: _this.props.price,
+                url: _this.props.url,
+                quantity: _this.props.quantity
+            });
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -33733,6 +33767,7 @@ var ProductRecord = function (_React$Component) {
                 React.createElement(
                     'td',
                     null,
+                    React.createElement('input', { type: 'button', onClick: this.recordEdit, value: 'Edit' }),
                     React.createElement('input', { type: 'button', onClick: this.recordDelete, value: 'Delete' })
                 )
             );
@@ -33752,7 +33787,8 @@ ProductRecord.propTypes = {
     alignedClassName: PropTypes.string,
     selectedItemCode: PropTypes.number,
     cbClicked: PropTypes.func.isRequired,
-    cbDelete: PropTypes.func.isRequired
+    cbDelete: PropTypes.func.isRequired,
+    cbEdit: PropTypes.func.isRequired
 };
 
 

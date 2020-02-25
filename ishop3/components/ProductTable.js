@@ -56,8 +56,21 @@ class ProductTable extends React.Component {
         this.setState({
             workMode: null,
             selectedItem: { 
-                code: null
+                code: null,
             }
+        });
+    };
+
+    addNew = () => {
+        this.setState({
+            workMode: 1,
+        })
+    }
+
+    edit = (editItem) => {
+        this.setState({
+            workMode: 2,
+            selectedItem: editItem
         });
     };
 
@@ -91,6 +104,7 @@ class ProductTable extends React.Component {
                 selectedItemCode = {this.state.selectedItem.code}
                 cbClicked = {this.clicked}
                 cbDelete = {this.delete}
+                cbEdit = {this.edit}
             />
         );
 
@@ -105,6 +119,11 @@ class ProductTable extends React.Component {
                         { tableBody }
                     </tbody>
                 </table>
+                <div className={"cardWrapper"}>
+                {
+                    (this.state.workMode !== 1 && this.state.workMode !== 2) &&
+                    <input type={ 'button' } onClick={ this.addNew } value={ 'New product' } />
+                }
                 {
                     (this.state.workMode === 0) &&
                     <ProductCard
@@ -112,6 +131,15 @@ class ProductTable extends React.Component {
                         price = { this.state.selectedItem.price }
                     />
                 }
+                {
+                    (this.state.workMode === 1) &&
+                    <p>Компонент нового товара здесь</p>
+                }
+                {
+                    (this.state.workMode === 2) &&
+                    <p>Компонент редактируемого товара здесь</p>
+                }
+                </div>
             </Fragment>
         );
     }
