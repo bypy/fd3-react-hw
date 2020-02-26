@@ -33913,19 +33913,16 @@ var ProductEditor = function (_React$Component) {
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductEditor.__proto__ || Object.getPrototypeOf(ProductEditor)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             unsavedChanges: false,
-            inputValues: {
-                nameField: _this.props.name,
-                priceField: _this.props.price,
-                urlField: _this.props.url,
-                quantityField: _this.props.quantity
-
-            }
+            nameField: _this.props.name,
+            priceField: _this.props.price,
+            urlField: _this.props.url,
+            quantityField: _this.props.quantity
         }, _this.fieldChanged = function (EO) {
+            EO.preventDefault();
             var changedInputName = EO.target.getAttribute("name");
-            _this.setState({
-                unsavedChanges: true,
-                inputValues: _defineProperty({}, changedInputName, EO.target.value)
-            });
+            _this.setState(_defineProperty({
+                unsavedChanges: true
+            }, changedInputName, EO.target.value));
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -33940,25 +33937,25 @@ var ProductEditor = function (_React$Component) {
                     type: 'text',
                     name: 'nameField',
                     onChange: this.fieldChanged,
-                    value: this.state.inputValues.nameField
+                    value: this.state.nameField
                 }),
                 React.createElement('input', {
                     type: 'text',
                     name: 'priceField',
                     onChange: this.fieldChanged,
-                    value: this.state.inputValues.priceField
+                    value: this.state.priceField
                 }),
                 React.createElement('input', {
                     type: 'text',
                     name: 'urlField',
                     onChange: this.fieldChanged,
-                    value: this.state.inputValues.urlField
+                    value: this.state.urlField
                 }),
                 React.createElement('input', {
                     type: 'text',
                     name: 'quantityField',
                     onChange: this.fieldChanged,
-                    value: this.state.inputValues.quantityField
+                    value: this.state.quantityField
                 })
             );
         }

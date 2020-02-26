@@ -15,13 +15,10 @@ class ProductEditor extends React.Component {
 
     state = {
         unsavedChanges: false,
-        inputValues: {
-            nameField: '',
-            priceField: '',
-            urlField: '',
-            quantityField: ''
-
-        }
+        nameField: this.props.name,
+        priceField: this.props.price,
+        urlField: this.props.url,
+        quantityField: this.props.quantity,
     }
 
     fieldChanged = (EO) => {
@@ -29,9 +26,7 @@ class ProductEditor extends React.Component {
         let changedInputName = EO.target.getAttribute("name");
         this.setState({
             unsavedChanges: true,
-            inputValues: {
-                [changedInputName]: EO.target.value
-            },
+            [changedInputName]: EO.target.value
         })
     };
 
@@ -43,25 +38,25 @@ class ProductEditor extends React.Component {
                     type="text"
                     name="nameField"
                     onChange={ this.fieldChanged }
-                    value={ this.state.inputValues.nameField }
+                    value={ this.state.nameField }
                 />
                 <input
                     type="text"
                     name="priceField"
                     onChange={ this.fieldChanged }
-                    value={ this.state.inputValues.priceField }
+                    value={ this.state.priceField }
                 />
                 <input
                     type="text"
                     name="urlField"
                     onChange={ this.fieldChanged }
-                    value={ this.state.inputValues.urlField }
+                    value={ this.state.urlField }
                 />
                 <input
                     type="text"
                     name="quantityField"
                     onChange={ this.fieldChanged }
-                    value={ this.state.inputValues.quantityField }
+                    value={ this.state.quantityField }
                 />
             </div>
         );
