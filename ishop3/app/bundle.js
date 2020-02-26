@@ -617,7 +617,7 @@ var ReactDOM = __webpack_require__(14);
 
 var ProductTable = __webpack_require__(24);
 
-var shopItems = __webpack_require__(33);
+var shopItems = __webpack_require__(34);
 
 // данные для заполнения в компоненте
 var shopName = 'ishop2';
@@ -32823,11 +32823,12 @@ var PropTypes = __webpack_require__(3);
 // вложенные компоненты
 var ProductRecord = __webpack_require__(28);
 var ProductCard = __webpack_require__(30);
+var ProductEditor = __webpack_require__(32);
 
 var selectedClassName = 'highlight';
 var alignedClassName = 'tal';
 
-__webpack_require__(32);
+__webpack_require__(33);
 
 var ProductTable = function (_React$Component) {
     _inherits(ProductTable, _React$Component);
@@ -32972,11 +32973,13 @@ var ProductTable = function (_React$Component) {
                         null,
                         '\u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u043D\u043E\u0432\u043E\u0433\u043E \u0442\u043E\u0432\u0430\u0440\u0430 \u0437\u0434\u0435\u0441\u044C'
                     ),
-                    this.state.workMode === 2 && React.createElement(
-                        'p',
-                        null,
-                        '\u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u0443\u0435\u043C\u043E\u0433\u043E \u0442\u043E\u0432\u0430\u0440\u0430 \u0437\u0434\u0435\u0441\u044C'
-                    )
+                    this.state.workMode === 2 && React.createElement(ProductEditor, {
+                        code: this.state.selectedItem.code,
+                        name: this.state.selectedItem.name,
+                        price: this.state.selectedItem.price,
+                        url: this.state.selectedItem.url,
+                        quantity: this.state.selectedItem.quantity
+                    })
                 )
             );
         }
@@ -33874,12 +33877,115 @@ module.exports = ProductCard;
 
 /***/ }),
 /* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(1);
+var PropTypes = __webpack_require__(3);
+
+// require(./ProductEditor.css);
+
+var ProductEditor = function (_React$Component) {
+    _inherits(ProductEditor, _React$Component);
+
+    function ProductEditor() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, ProductEditor);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductEditor.__proto__ || Object.getPrototypeOf(ProductEditor)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            unsavedChanges: false,
+            inputValues: {
+                nameField: _this.props.name,
+                priceField: _this.props.price,
+                urlField: _this.props.url,
+                quantityField: _this.props.quantity
+
+            }
+        }, _this.fieldChanged = function (EO) {
+            var changedInputName = EO.target.getAttribute("name");
+            _this.setState({
+                unsavedChanges: true,
+                inputValues: _defineProperty({}, changedInputName, EO.target.value)
+            });
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(ProductEditor, [{
+        key: 'render',
+        value: function render() {
+
+            return React.createElement(
+                'div',
+                { className: "ProductCard" },
+                React.createElement('input', {
+                    type: 'text',
+                    name: 'nameField',
+                    onChange: this.fieldChanged,
+                    value: this.state.inputValues.nameField
+                }),
+                React.createElement('input', {
+                    type: 'text',
+                    name: 'priceField',
+                    onChange: this.fieldChanged,
+                    value: this.state.inputValues.priceField
+                }),
+                React.createElement('input', {
+                    type: 'text',
+                    name: 'urlField',
+                    onChange: this.fieldChanged,
+                    value: this.state.inputValues.urlField
+                }),
+                React.createElement('input', {
+                    type: 'text',
+                    name: 'quantityField',
+                    onChange: this.fieldChanged,
+                    value: this.state.inputValues.quantityField
+                })
+            );
+        }
+    }]);
+
+    return ProductEditor;
+}(React.Component);
+
+ProductEditor.propTypes = {
+    code: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    url: PropTypes.string.isRequired,
+    quantity: PropTypes.number.isRequired
+};
+
+
+module.exports = ProductEditor;
+
+/***/ }),
+/* 33 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = [{"name":"product1","price":30,"url":"http://aaa.com","quantity":20,"description":"lorem product1"},{"name":"product2","price":40,"url":"http://bbb.com","quantity":15,"description":"lorem product2"},{"name":"newproduct3","price":80,"url":"http://ccc.com","quantity":49,"description":"lorem newproduct3"},{"name":"product4","price":90,"url":"http://ddd.com","quantity":8,"description":"lorem product4"},{"name":"product5","price":120,"url":"http://eee.com","quantity":22,"description":"lorem product5"},{"name":"product6","price":50,"url":"http://fff.com","quantity":3,"description":"lorem product6"}]

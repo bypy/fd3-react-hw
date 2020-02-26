@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 // вложенные компоненты
 const ProductRecord = require('./ProductRecord');
 const ProductCard = require('./ProductCard');
+const ProductEditor = require('./ProductEditor');
 
 const selectedClassName = 'highlight';
 const alignedClassName = 'tal';
@@ -137,7 +138,13 @@ class ProductTable extends React.Component {
                 }
                 {
                     (this.state.workMode === 2) &&
-                    <p>Компонент редактируемого товара здесь</p>
+                    <ProductEditor
+                        code = { this.state.selectedItem.code }
+                        name = { this.state.selectedItem.name }
+                        price = { this.state.selectedItem.price }
+                        url = { this.state.selectedItem.url }
+                        quantity = { this.state.selectedItem.quantity }               
+                    />
                 }
                 </div>
             </Fragment>
