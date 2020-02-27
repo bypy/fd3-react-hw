@@ -2,6 +2,18 @@
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
+}
+
+.ProductCard input {
+    display: block;
+    box-sizing: border-box;
+    width: 30%;
+    max-width: 50ex;
+    margin-top: .5em;
+}
+
+.ProductCard input:not(:last-child):focus {
+    background-color: #e6f4fa;
 }.ProductTable,
 .ProductTable + .cardWrapper {
     width: 100%;

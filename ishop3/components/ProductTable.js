@@ -28,6 +28,7 @@ class ProductTable extends React.Component {
 
     state = {
         workMode: null,
+        unsaved: false,
         selectedItem: {},
         stuff: this.props.items
     };
@@ -39,7 +40,7 @@ class ProductTable extends React.Component {
         });
     };
     
-    delete = (code) => {
+    del = (code) => {
         let newTableStuff = this.state.stuff.filter((el, i) => {
             if (i === code) return false;
             else return true;
@@ -75,6 +76,34 @@ class ProductTable extends React.Component {
         });
     };
 
+    changing = (flag) => {
+        this.setState({
+            unsaved: flag
+        });
+    };
+
+    saveChanged = (updatedItem) => {
+        let targetIndex = null;
+        this.state.stuff.forEach((el, i) => {
+            if (i === updatedItem.code) {
+                targetIndex = i;
+            }
+        });
+        if (targetIndex !== null) {
+            let newTableStuff = this.state.stuff.slice();
+            newTableStuff[targetIndex] = updatedItem;
+            this.setState({
+                stuff: newTableStuff,
+                workMode: null,
+                selectedItem: { 
+                    code: null
+                }
+            });
+        }
+    };
+
+
+
     render() {
 
         let tableCaption = this.props.name
@@ -94,25 +123,26 @@ class ProductTable extends React.Component {
 
         let tableBody = this.state.stuff.map(v =>
             <ProductRecord
-                key = {++keyCode}
-                code = {keyCode}
-                name = {v.name}
-                price = {v.price}
-                url = {v.url}
-                quantity = {v.quantity}
-                selectedClassName = {selectedClassName}
-                alignedClassName = {alignedClassName}
-                selectedItemCode = {this.state.selectedItem.code}
-                cbClicked = {this.clicked}
-                cbDelete = {this.delete}
-                cbEdit = {this.edit}
+                key = { ++keyCode }
+                code = { keyCode }
+                name = { v.name }
+                price = { v.price }
+                url = { v.url }
+                quantity = { v.quantity }
+                selectedClassName = { selectedClassName }
+                alignedClassName = { alignedClassName }
+                selectedItemCode = { this.state.selectedItem.code }
+                cbClicked = { this.clicked }
+                cbDelete = { this.del }
+                cbEdit = { this.edit }
+                disableEdit = { this.state.unsaved }
             />
         );
 
         return (
             <Fragment>
-                <table className = {this.props.tableClassName || null} >
-                    <caption>{tableCaption}</caption>
+                <table className = { this.props.tableClassName || null } >
+                    <caption>{ tableCaption }</caption>
                     <thead>
                         { tableHead }
                     </thead>
@@ -143,7 +173,9 @@ class ProductTable extends React.Component {
                         name = { this.state.selectedItem.name }
                         price = { this.state.selectedItem.price }
                         url = { this.state.selectedItem.url }
-                        quantity = { this.state.selectedItem.quantity }               
+                        quantity = { this.state.selectedItem.quantity }
+                        cbDisableOther = { this.changing }
+                        cbUpdate = { this.saveChanged }    
                     />
                 }
                 </div>

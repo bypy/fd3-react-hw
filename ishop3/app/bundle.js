@@ -32846,6 +32846,7 @@ var ProductTable = function (_React$Component) {
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductTable.__proto__ || Object.getPrototypeOf(ProductTable)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             workMode: null,
+            unsaved: false,
             selectedItem: {},
             stuff: _this.props.items
         }, _this.clicked = function (clikedItem) {
@@ -32853,7 +32854,7 @@ var ProductTable = function (_React$Component) {
                 workMode: 0,
                 selectedItem: clikedItem
             });
-        }, _this.delete = function (code) {
+        }, _this.del = function (code) {
             var newTableStuff = _this.state.stuff.filter(function (el, i) {
                 if (i === code) return false;else return true;
             });
@@ -32880,6 +32881,28 @@ var ProductTable = function (_React$Component) {
                 workMode: 2,
                 selectedItem: editItem
             });
+        }, _this.changing = function (flag) {
+            _this.setState({
+                unsaved: flag
+            });
+        }, _this.saveChanged = function (updatedItem) {
+            var targetIndex = null;
+            _this.state.stuff.forEach(function (el, i) {
+                if (i === updatedItem.code) {
+                    targetIndex = i;
+                }
+            });
+            if (targetIndex !== null) {
+                var newTableStuff = _this.state.stuff.slice();
+                newTableStuff[targetIndex] = updatedItem;
+                _this.setState({
+                    stuff: newTableStuff,
+                    workMode: null,
+                    selectedItem: {
+                        code: null
+                    }
+                });
+            }
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -32933,8 +32956,9 @@ var ProductTable = function (_React$Component) {
                     alignedClassName: alignedClassName,
                     selectedItemCode: _this2.state.selectedItem.code,
                     cbClicked: _this2.clicked,
-                    cbDelete: _this2.delete,
-                    cbEdit: _this2.edit
+                    cbDelete: _this2.del,
+                    cbEdit: _this2.edit,
+                    disableEdit: _this2.state.unsaved
                 });
             });
 
@@ -32978,7 +33002,9 @@ var ProductTable = function (_React$Component) {
                         name: this.state.selectedItem.name,
                         price: this.state.selectedItem.price,
                         url: this.state.selectedItem.url,
-                        quantity: this.state.selectedItem.quantity
+                        quantity: this.state.selectedItem.quantity,
+                        cbDisableOther: this.changing,
+                        cbUpdate: this.saveChanged
                     })
                 )
             );
@@ -33770,8 +33796,10 @@ var ProductRecord = function (_React$Component) {
                 React.createElement(
                     'td',
                     null,
-                    React.createElement('input', { type: 'button', onClick: this.recordEdit, value: 'Edit' }),
-                    React.createElement('input', { type: 'button', onClick: this.recordDelete, value: 'Delete' })
+                    React.createElement('input', { type: 'button', onClick: this.recordEdit, value: 'Edit',
+                        disabled: this.props.disableEdit }),
+                    React.createElement('input', { type: 'button', onClick: this.recordDelete, value: 'Delete',
+                        disabled: this.props.disableEdit })
                 )
             );
         }
@@ -33791,7 +33819,8 @@ ProductRecord.propTypes = {
     selectedItemCode: PropTypes.number,
     cbClicked: PropTypes.func.isRequired,
     cbDelete: PropTypes.func.isRequired,
-    cbEdit: PropTypes.func.isRequired
+    cbEdit: PropTypes.func.isRequired,
+    disableEdit: PropTypes.bool.isRequired
 };
 
 
@@ -33895,8 +33924,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var React = __webpack_require__(1);
 var PropTypes = __webpack_require__(3);
 
-// require(./ProductEditor.css);
-
 var ProductEditor = function (_React$Component) {
     _inherits(ProductEditor, _React$Component);
 
@@ -33912,17 +33939,32 @@ var ProductEditor = function (_React$Component) {
         }
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductEditor.__proto__ || Object.getPrototypeOf(ProductEditor)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-            unsavedChanges: false,
+            unsavedChangesStatus: false,
             nameField: _this.props.name,
             priceField: _this.props.price,
             urlField: _this.props.url,
             quantityField: _this.props.quantity
-        }, _this.fieldChanged = function (EO) {
+        }, _this.unsavedChanges = {}, _this.fieldChanged = function (EO) {
             EO.preventDefault();
-            var changedInputName = EO.target.getAttribute("name");
+            _this.props.cbDisableOther(true);
+            var changedFieldName = EO.target.getAttribute("name");
+
+            // TODO валидация
+            _this.unsavedChanges[changedFieldName] = EO.target.value;
+
             _this.setState(_defineProperty({
-                unsavedChanges: true
-            }, changedInputName, EO.target.value));
+                unsavedChangesStatus: true
+            }, changedFieldName, EO.target.value));
+        }, _this.saveUpdated = function (EO) {
+            EO.preventDefault();
+            _this.props.cbUpdate({
+                code: _this.props.code, // компонент не изменяет код товара
+                name: _this.state.nameField,
+                price: parseFloat(_this.state.priceField),
+                url: _this.state.urlField,
+                quantity: parseInt(_this.state.quantityField)
+            });
+            _this.props.cbDisableOther(false);
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -33956,6 +33998,12 @@ var ProductEditor = function (_React$Component) {
                     name: 'quantityField',
                     onChange: this.fieldChanged,
                     value: this.state.quantityField
+                }),
+                React.createElement('input', {
+                    type: 'button',
+                    name: 'update',
+                    value: 'Update',
+                    onClick: this.saveUpdated
                 })
             );
         }
@@ -33969,7 +34017,9 @@ ProductEditor.propTypes = {
     name: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
     url: PropTypes.string.isRequired,
-    quantity: PropTypes.number.isRequired
+    quantity: PropTypes.number.isRequired,
+    cbDisableOther: PropTypes.func.isRequired,
+    cbUpdate: PropTypes.func.isRequired
 };
 
 
@@ -33985,7 +34035,7 @@ module.exports = ProductEditor;
 /* 34 */
 /***/ (function(module, exports) {
 
-module.exports = [{"name":"product1","price":30,"url":"http://aaa.com","quantity":20,"description":"lorem product1"},{"name":"product2","price":40,"url":"http://bbb.com","quantity":15,"description":"lorem product2"},{"name":"newproduct3","price":80,"url":"http://ccc.com","quantity":49,"description":"lorem newproduct3"},{"name":"product4","price":90,"url":"http://ddd.com","quantity":8,"description":"lorem product4"},{"name":"product5","price":120,"url":"http://eee.com","quantity":22,"description":"lorem product5"},{"name":"product6","price":50,"url":"http://fff.com","quantity":3,"description":"lorem product6"}]
+module.exports = [{"name":"product1","price":30,"url":"http://aaa.com","quantity":20},{"name":"product2","price":40,"url":"http://bbb.com","quantity":15},{"name":"newproduct3","price":80,"url":"http://ccc.com","quantity":49},{"name":"product4","price":90,"url":"http://ddd.com","quantity":8},{"name":"product5","price":120,"url":"http://eee.com","quantity":22},{"name":"product6","price":50,"url":"http://fff.com","quantity":3}]
 
 /***/ })
 /******/ ]);

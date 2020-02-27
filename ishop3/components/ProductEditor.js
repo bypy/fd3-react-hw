@@ -2,7 +2,6 @@ const React = require('react');
 const PropTypes = require('prop-types');
 
 
-// require(./ProductEditor.css);
 class ProductEditor extends React.Component {
 
     static propTypes = {
@@ -10,25 +9,46 @@ class ProductEditor extends React.Component {
         name: PropTypes.string.isRequired,
         price: PropTypes.number.isRequired,
         url: PropTypes.string.isRequired,
-        quantity: PropTypes.number.isRequired
+        quantity: PropTypes.number.isRequired,
+        cbDisableOther: PropTypes.func.isRequired,
+        cbUpdate: PropTypes.func.isRequired,
     };
 
     state = {
-        unsavedChanges: false,
+        unsavedChangesStatus: false,
         nameField: this.props.name,
         priceField: this.props.price,
         urlField: this.props.url,
         quantityField: this.props.quantity,
-    }
+    };
+
+    unsavedChanges = {};
 
     fieldChanged = (EO) => {
         EO.preventDefault();
-        let changedInputName = EO.target.getAttribute("name");
+        this.props.cbDisableOther(true);
+        let changedFieldName = EO.target.getAttribute("name");
+        
+        // TODO валидация
+        this.unsavedChanges[changedFieldName] = EO.target.value;
+
         this.setState({
-            unsavedChanges: true,
-            [changedInputName]: EO.target.value
+            unsavedChangesStatus: true,
+            [changedFieldName]: EO.target.value
         })
     };
+
+    saveUpdated = (EO) => {
+        EO.preventDefault();
+        this.props.cbUpdate({
+            code: this.props.code, // компонент не изменяет код товара
+            name: this.state.nameField,
+            price: parseFloat(this.state.priceField),
+            url: this.state.urlField,
+            quantity: parseInt(this.state.quantityField),
+        });
+        this.props.cbDisableOther(false);
+    }
 
     render() {
 
@@ -57,6 +77,12 @@ class ProductEditor extends React.Component {
                     name="quantityField"
                     onChange={ this.fieldChanged }
                     value={ this.state.quantityField }
+                />
+                <input
+                    type="button"
+                    name="update"
+                    value="Update"
+                    onClick={ this.saveUpdated }
                 />
             </div>
         );
