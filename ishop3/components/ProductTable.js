@@ -30,6 +30,7 @@ class ProductTable extends React.Component {
         workMode: null,
         unsaved: false,
         selectedItem: {},
+        editItem: {},
         stuff: this.props.items
     };
 
@@ -72,7 +73,7 @@ class ProductTable extends React.Component {
     edit = (editItem) => {
         this.setState({
             workMode: 2,
-            selectedItem: editItem
+            editItem: editItem
         });
     };
 
@@ -110,7 +111,7 @@ class ProductTable extends React.Component {
             ? 'Список товаров магазина ' + this.props.name
             : 'Список товаров магазина ' + 'iShop';
 
-        let keyCode = -1; // keyCode первого товара будет равен 0 И своему индексу в массиве stuff
+        let keyCode = -1; 
         let tableHead = 
             <tr key={keyCode} onClick = {this.deselect}>
                 <th data-type = "name">{"Название"}</th>
@@ -123,7 +124,7 @@ class ProductTable extends React.Component {
 
         let tableBody = this.state.stuff.map(v =>
             <ProductRecord
-                key = { ++keyCode }
+                key = { ++keyCode } // keyCode первого товара будет равен 0 И своему индексу в массиве stuff
                 code = { keyCode }
                 name = { v.name }
                 price = { v.price }
@@ -169,11 +170,12 @@ class ProductTable extends React.Component {
                 {
                     (this.state.workMode === 2) &&
                     <ProductEditor
-                        code = { this.state.selectedItem.code }
-                        name = { this.state.selectedItem.name }
-                        price = { this.state.selectedItem.price }
-                        url = { this.state.selectedItem.url }
-                        quantity = { this.state.selectedItem.quantity }
+                        key={ this.state.editItem.code } 
+                        code = { this.state.editItem.code }
+                        name = { this.state.editItem.name }
+                        price = { this.state.editItem.price }
+                        url = { this.state.editItem.url }
+                        quantity = { this.state.editItem.quantity }
                         cbDisableOther = { this.changing }
                         cbUpdate = { this.saveChanged }    
                     />

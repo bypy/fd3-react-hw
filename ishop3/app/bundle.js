@@ -32848,6 +32848,7 @@ var ProductTable = function (_React$Component) {
             workMode: null,
             unsaved: false,
             selectedItem: {},
+            editItem: {},
             stuff: _this.props.items
         }, _this.clicked = function (clikedItem) {
             _this.setState({
@@ -32879,7 +32880,7 @@ var ProductTable = function (_React$Component) {
         }, _this.edit = function (editItem) {
             _this.setState({
                 workMode: 2,
-                selectedItem: editItem
+                editItem: editItem
             });
         }, _this.changing = function (flag) {
             _this.setState({
@@ -32913,7 +32914,7 @@ var ProductTable = function (_React$Component) {
 
             var tableCaption = this.props.name ? 'Список товаров магазина ' + this.props.name : 'Список товаров магазина ' + 'iShop';
 
-            var keyCode = -1; // keyCode первого товара будет равен 0 И своему индексу в массиве stuff
+            var keyCode = -1;
             var tableHead = React.createElement(
                 'tr',
                 { key: keyCode, onClick: this.deselect },
@@ -32946,8 +32947,8 @@ var ProductTable = function (_React$Component) {
 
             var tableBody = this.state.stuff.map(function (v) {
                 return React.createElement(ProductRecord, {
-                    key: ++keyCode,
-                    code: keyCode,
+                    key: ++keyCode // keyCode первого товара будет равен 0 И своему индексу в массиве stuff
+                    , code: keyCode,
                     name: v.name,
                     price: v.price,
                     url: v.url,
@@ -32998,11 +32999,12 @@ var ProductTable = function (_React$Component) {
                         '\u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u043D\u043E\u0432\u043E\u0433\u043E \u0442\u043E\u0432\u0430\u0440\u0430 \u0437\u0434\u0435\u0441\u044C'
                     ),
                     this.state.workMode === 2 && React.createElement(ProductEditor, {
-                        code: this.state.selectedItem.code,
-                        name: this.state.selectedItem.name,
-                        price: this.state.selectedItem.price,
-                        url: this.state.selectedItem.url,
-                        quantity: this.state.selectedItem.quantity,
+                        key: this.state.editItem.code,
+                        code: this.state.editItem.code,
+                        name: this.state.editItem.name,
+                        price: this.state.editItem.price,
+                        url: this.state.editItem.url,
+                        quantity: this.state.editItem.quantity,
                         cbDisableOther: this.changing,
                         cbUpdate: this.saveChanged
                     })
