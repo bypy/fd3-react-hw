@@ -16,10 +16,10 @@ class ProductEditor extends React.Component {
 
     state = {
         unsavedChangesStatus: false,
-        nameField: this.props.name,
-        priceField: this.props.price,
-        urlField: this.props.url,
-        quantityField: this.props.quantity,
+        name: this.props.name,
+        price: this.props.price,
+        url: this.props.url,
+        quantity: this.props.quantity,
     };
 
     unsavedChanges = {};
@@ -42,10 +42,10 @@ class ProductEditor extends React.Component {
         EO.preventDefault();
         this.props.cbUpdate({
             code: this.props.code, // компонент не изменяет код товара
-            name: this.state.nameField,
-            price: parseFloat(this.state.priceField),
-            url: this.state.urlField,
-            quantity: parseInt(this.state.quantityField),
+            name: this.state.name,
+            price: parseFloat(this.state.price),
+            url: this.state.url,
+            quantity: parseInt(this.state.quantity),
         });
         this.props.cbDisableOther(false);
     }
@@ -56,27 +56,27 @@ class ProductEditor extends React.Component {
             <div className={"ProductCard"}>
                 <input
                     type="text"
-                    name="nameField"
+                    name="name"
                     onChange={ this.fieldChanged }
-                    value={ this.state.nameField }
+                    value={ this.state.name }
                 />
                 <input
                     type="text"
-                    name="priceField"
+                    name="price"
                     onChange={ this.fieldChanged }
-                    value={ this.state.priceField }
+                    value={ this.state.price }
                 />
                 <input
                     type="text"
-                    name="urlField"
+                    name="url"
                     onChange={ this.fieldChanged }
-                    value={ this.state.urlField }
+                    value={ this.state.url }
                 />
                 <input
                     type="text"
-                    name="quantityField"
+                    name="quantity"
                     onChange={ this.fieldChanged }
-                    value={ this.state.quantityField }
+                    value={ this.state.quantity }
                 />
                 <input
                     type="button"

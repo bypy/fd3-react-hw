@@ -33940,10 +33940,10 @@ var ProductEditor = function (_React$Component) {
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductEditor.__proto__ || Object.getPrototypeOf(ProductEditor)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             unsavedChangesStatus: false,
-            nameField: _this.props.name,
-            priceField: _this.props.price,
-            urlField: _this.props.url,
-            quantityField: _this.props.quantity
+            name: _this.props.name,
+            price: _this.props.price,
+            url: _this.props.url,
+            quantity: _this.props.quantity
         }, _this.unsavedChanges = {}, _this.fieldChanged = function (EO) {
             EO.preventDefault();
             _this.props.cbDisableOther(true);
@@ -33959,10 +33959,10 @@ var ProductEditor = function (_React$Component) {
             EO.preventDefault();
             _this.props.cbUpdate({
                 code: _this.props.code, // компонент не изменяет код товара
-                name: _this.state.nameField,
-                price: parseFloat(_this.state.priceField),
-                url: _this.state.urlField,
-                quantity: parseInt(_this.state.quantityField)
+                name: _this.state.name,
+                price: parseFloat(_this.state.price),
+                url: _this.state.url,
+                quantity: parseInt(_this.state.quantity)
             });
             _this.props.cbDisableOther(false);
         }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -33977,27 +33977,27 @@ var ProductEditor = function (_React$Component) {
                 { className: "ProductCard" },
                 React.createElement('input', {
                     type: 'text',
-                    name: 'nameField',
+                    name: 'name',
                     onChange: this.fieldChanged,
-                    value: this.state.nameField
+                    value: this.state.name
                 }),
                 React.createElement('input', {
                     type: 'text',
-                    name: 'priceField',
+                    name: 'price',
                     onChange: this.fieldChanged,
-                    value: this.state.priceField
+                    value: this.state.price
                 }),
                 React.createElement('input', {
                     type: 'text',
-                    name: 'urlField',
+                    name: 'url',
                     onChange: this.fieldChanged,
-                    value: this.state.urlField
+                    value: this.state.url
                 }),
                 React.createElement('input', {
                     type: 'text',
-                    name: 'quantityField',
+                    name: 'quantity',
                     onChange: this.fieldChanged,
-                    value: this.state.quantityField
+                    value: this.state.quantity
                 }),
                 React.createElement('input', {
                     type: 'button',
