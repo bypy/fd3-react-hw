@@ -1,19 +1,28 @@
 .ProductCard {
     width: 100%;
     max-width: 900px;
-    margin: 0 auto;
+    margin: 3em auto 0;
 }
 
 .ProductCard input {
     display: block;
     box-sizing: border-box;
-    width: 30%;
-    max-width: 50ex;
     margin-top: .5em;
+    padding: 2px 3px;
+    width: 30%;
+    max-width: 360px;
+    min-width: 110px;
 }
 
 .ProductCard input:not(:last-child):focus {
     background-color: #e6f4fa;
+}
+
+.ProductCard input:nth-last-child(-n+2) {
+    display: inline-block;
+    width: 15%;
+    max-width: 180px;
+    min-width: 55px;
 }.ProductTable,
 .ProductTable + .cardWrapper {
     width: 100%;

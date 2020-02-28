@@ -40,6 +40,14 @@ class ProductTable extends React.Component {
             selectedItem: clikedItem,
         });
     };
+
+    edit = (editItem) => {
+        this.setState({
+            workMode: 2,
+            selectedItem: null,
+            editItem: editItem
+        });
+    };
     
     del = (code) => {
         let newTableStuff = this.state.stuff.filter((el, i) => {
@@ -68,13 +76,6 @@ class ProductTable extends React.Component {
         this.setState({
             workMode: 1,
         })
-    }
-
-    edit = (editItem) => {
-        this.setState({
-            workMode: 2,
-            editItem: editItem
-        });
     };
 
     changing = (flag) => {
@@ -132,11 +133,14 @@ class ProductTable extends React.Component {
                 quantity = { v.quantity }
                 selectedClassName = { selectedClassName }
                 alignedClassName = { alignedClassName }
-                selectedItemCode = { this.state.selectedItem.code }
+                selectedItemCode = {
+                    (this.state.selectedItem) && 
+                    this.state.selectedItem.code
+                }
                 cbClicked = { this.clicked }
                 cbDelete = { this.del }
                 cbEdit = { this.edit }
-                disableEdit = { this.state.unsaved }
+                disableDelete = { this.state.unsaved }
             />
         );
 
@@ -161,6 +165,8 @@ class ProductTable extends React.Component {
                     <ProductCard
                         name = { this.state.selectedItem.name }
                         price = { this.state.selectedItem.price }
+                        url = { this.state.selectedItem.url }
+                        quantity = { this.state.selectedItem.quantity }
                     />
                 }
                 {
@@ -176,7 +182,7 @@ class ProductTable extends React.Component {
                         price = { this.state.editItem.price }
                         url = { this.state.editItem.url }
                         quantity = { this.state.editItem.quantity }
-                        cbDisableOther = { this.changing }
+                        cbDisableDel = { this.changing }
                         cbUpdate = { this.saveChanged }    
                     />
                 }

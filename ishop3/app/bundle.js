@@ -32855,6 +32855,12 @@ var ProductTable = function (_React$Component) {
                 workMode: 0,
                 selectedItem: clikedItem
             });
+        }, _this.edit = function (editItem) {
+            _this.setState({
+                workMode: 2,
+                selectedItem: null,
+                editItem: editItem
+            });
         }, _this.del = function (code) {
             var newTableStuff = _this.state.stuff.filter(function (el, i) {
                 if (i === code) return false;else return true;
@@ -32876,11 +32882,6 @@ var ProductTable = function (_React$Component) {
         }, _this.addNew = function () {
             _this.setState({
                 workMode: 1
-            });
-        }, _this.edit = function (editItem) {
-            _this.setState({
-                workMode: 2,
-                editItem: editItem
             });
         }, _this.changing = function (flag) {
             _this.setState({
@@ -32955,11 +32956,11 @@ var ProductTable = function (_React$Component) {
                     quantity: v.quantity,
                     selectedClassName: selectedClassName,
                     alignedClassName: alignedClassName,
-                    selectedItemCode: _this2.state.selectedItem.code,
+                    selectedItemCode: _this2.state.selectedItem && _this2.state.selectedItem.code,
                     cbClicked: _this2.clicked,
                     cbDelete: _this2.del,
                     cbEdit: _this2.edit,
-                    disableEdit: _this2.state.unsaved
+                    disableDelete: _this2.state.unsaved
                 });
             });
 
@@ -32991,7 +32992,9 @@ var ProductTable = function (_React$Component) {
                     this.state.workMode !== 1 && this.state.workMode !== 2 && React.createElement('input', { type: 'button', onClick: this.addNew, value: 'New product' }),
                     this.state.workMode === 0 && React.createElement(ProductCard, {
                         name: this.state.selectedItem.name,
-                        price: this.state.selectedItem.price
+                        price: this.state.selectedItem.price,
+                        url: this.state.selectedItem.url,
+                        quantity: this.state.selectedItem.quantity
                     }),
                     this.state.workMode === 1 && React.createElement(
                         'p',
@@ -33005,7 +33008,7 @@ var ProductTable = function (_React$Component) {
                         price: this.state.editItem.price,
                         url: this.state.editItem.url,
                         quantity: this.state.editItem.quantity,
-                        cbDisableOther: this.changing,
+                        cbDisableDel: this.changing,
                         cbUpdate: this.saveChanged
                     })
                 )
@@ -33750,7 +33753,9 @@ var ProductRecord = function (_React$Component) {
             _this.props.cbClicked({
                 code: _this.props.code,
                 name: _this.props.name,
-                price: _this.props.price
+                price: _this.props.price,
+                url: _this.props.url,
+                quantity: _this.props.quantity
             });
         }, _this.recordDelete = function (EO) {
             EO.stopPropagation();
@@ -33801,7 +33806,7 @@ var ProductRecord = function (_React$Component) {
                     React.createElement('input', { type: 'button', onClick: this.recordEdit, value: 'Edit',
                         disabled: this.props.disableEdit }),
                     React.createElement('input', { type: 'button', onClick: this.recordDelete, value: 'Delete',
-                        disabled: this.props.disableEdit })
+                        disabled: this.props.disableDelete })
                 )
             );
         }
@@ -33822,7 +33827,7 @@ ProductRecord.propTypes = {
     cbClicked: PropTypes.func.isRequired,
     cbDelete: PropTypes.func.isRequired,
     cbEdit: PropTypes.func.isRequired,
-    disableEdit: PropTypes.bool.isRequired
+    disableDelete: PropTypes.bool.isRequired
 };
 
 
@@ -33877,13 +33882,20 @@ var ProductCard = function (_React$Component) {
                 React.createElement(
                     'p',
                     null,
-                    'Lorem Ipsum'
+                    'Price: ',
+                    this.props.price
                 ),
                 React.createElement(
                     'p',
                     null,
-                    'Price: ',
-                    this.props.price
+                    'URL: ',
+                    this.props.url
+                ),
+                React.createElement(
+                    'p',
+                    null,
+                    'Quantity: ',
+                    this.props.quantity
                 )
             );
         }
@@ -33894,7 +33906,9 @@ var ProductCard = function (_React$Component) {
 
 ProductCard.propTypes = {
     name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired
+    price: PropTypes.number.isRequired,
+    url: PropTypes.string.isRequired,
+    quantity: PropTypes.number.isRequired
 };
 
 
@@ -33948,7 +33962,7 @@ var ProductEditor = function (_React$Component) {
             quantity: _this.props.quantity
         }, _this.unsavedChanges = {}, _this.fieldChanged = function (EO) {
             EO.preventDefault();
-            _this.props.cbDisableOther(true);
+            _this.props.cbDisableDel(true);
             var changedFieldName = EO.target.getAttribute("name");
 
             // TODO валидация
@@ -33966,7 +33980,7 @@ var ProductEditor = function (_React$Component) {
                 url: _this.state.url,
                 quantity: parseInt(_this.state.quantity)
             });
-            _this.props.cbDisableOther(false);
+            _this.props.cbDisableDel(false);
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -34003,9 +34017,15 @@ var ProductEditor = function (_React$Component) {
                 }),
                 React.createElement('input', {
                     type: 'button',
-                    name: 'update',
-                    value: 'Update',
+                    name: 'save',
+                    value: 'Save',
                     onClick: this.saveUpdated
+                }),
+                React.createElement('input', {
+                    type: 'button',
+                    name: 'cancel',
+                    value: 'Cancel',
+                    onClick: this.cancelUpdated
                 })
             );
         }
@@ -34020,7 +34040,7 @@ ProductEditor.propTypes = {
     price: PropTypes.number.isRequired,
     url: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
-    cbDisableOther: PropTypes.func.isRequired,
+    cbDisableDel: PropTypes.func.isRequired,
     cbUpdate: PropTypes.func.isRequired
 };
 

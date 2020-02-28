@@ -17,7 +17,7 @@ class ProductRecord extends React.Component {
         cbClicked: PropTypes.func.isRequired,
         cbDelete: PropTypes.func.isRequired,
         cbEdit: PropTypes.func.isRequired,
-        disableEdit: PropTypes.bool.isRequired,
+        disableDelete: PropTypes.bool.isRequired,
     };
 
     recordClicked = (EO) => {
@@ -25,6 +25,8 @@ class ProductRecord extends React.Component {
             code: this.props.code,
             name: this.props.name,
             price: this.props.price,
+            url: this.props.url,
+            quantity: this.props.quantity,
         });
     };
 
@@ -62,7 +64,7 @@ class ProductRecord extends React.Component {
                     <input type={ 'button' } onClick={ this.recordEdit } value={ 'Edit' }
                         disabled={ this.props.disableEdit } />
                     <input type={ 'button' } onClick={ this.recordDelete } value={ 'Delete' }
-                        disabled={ this.props.disableEdit } />
+                        disabled={ this.props.disableDelete } />
                 </td>
             </tr>
         );
