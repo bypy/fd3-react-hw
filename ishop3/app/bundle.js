@@ -32825,8 +32825,7 @@ var ProductRecord = __webpack_require__(28);
 var ProductCard = __webpack_require__(30);
 var ProductEditor = __webpack_require__(32);
 
-var selectedClassName = 'highlight';
-var alignedClassName = 'tal';
+//const selectedClassName = 'highlight';
 
 __webpack_require__(33);
 
@@ -32844,24 +32843,24 @@ var ProductTable = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductTable.__proto__ || Object.getPrototypeOf(ProductTable)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductTable.__proto__ || Object.getPrototypeOf(ProductTable)).call.apply(_ref, [this].concat(args))), _this), _this.selectedClassName = 'highlight', _this.state = {
             workMode: null,
             unsaved: false,
             selectedItem: {},
             editItem: {},
             stuff: _this.props.items
-        }, _this.clicked = function (clikedItem) {
+        }, _this.clickHandler = function (clikedItem) {
             _this.setState({
                 workMode: 0,
                 selectedItem: clikedItem
             });
-        }, _this.edit = function (editItem) {
+        }, _this.editHandler = function (editItem) {
             _this.setState({
                 workMode: 2,
                 selectedItem: null,
                 editItem: editItem
             });
-        }, _this.del = function (code) {
+        }, _this.deleteHandler = function (code) {
             var newTableStuff = _this.state.stuff.filter(function (el, i) {
                 if (i === code) return false;else return true;
             });
@@ -32913,8 +32912,6 @@ var ProductTable = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            var tableCaption = this.props.name ? 'Список товаров магазина ' + this.props.name : 'Список товаров магазина ' + 'iShop';
-
             var keyCode = -1;
             var tableHead = React.createElement(
                 'tr',
@@ -32922,27 +32919,27 @@ var ProductTable = function (_React$Component) {
                 React.createElement(
                     'th',
                     { 'data-type': 'name' },
-                    "Название"
+                    '\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435'
                 ),
                 React.createElement(
                     'th',
                     { 'data-type': 'cost' },
-                    "Цена, USD"
+                    '\u0426\u0435\u043D\u0430, USD'
                 ),
                 React.createElement(
                     'th',
                     { 'data-type': 'url' },
-                    "Ссылка"
+                    '\u0421\u0441\u044B\u043B\u043A\u0430'
                 ),
                 React.createElement(
                     'th',
                     { 'data-type': 'count' },
-                    "Ед. в наличии"
+                    '\u0415\u0434. \u0432 \u043D\u0430\u043B\u0438\u0447\u0438\u0438'
                 ),
                 React.createElement(
                     'th',
                     { 'data-type': 'control' },
-                    "Управление"
+                    '\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435'
                 )
             );
 
@@ -32954,13 +32951,12 @@ var ProductTable = function (_React$Component) {
                     price: v.price,
                     url: v.url,
                     quantity: v.quantity,
-                    selectedClassName: selectedClassName,
-                    alignedClassName: alignedClassName,
+                    selectedClassName: _this2.selectedClassName,
                     selectedItemCode: _this2.state.selectedItem && _this2.state.selectedItem.code,
-                    cbClicked: _this2.clicked,
-                    cbDelete: _this2.del,
-                    cbEdit: _this2.edit,
-                    disableDelete: _this2.state.unsaved
+                    cbOnClick: _this2.state.unsaved ? null : _this2.clickHandler,
+                    cbOnDelete: _this2.state.unsaved ? null : _this2.deleteHandler,
+                    cbOnEdit: _this2.state.unsaved ? null : _this2.editHandler,
+                    disableControls: _this2.state.unsaved
                 });
             });
 
@@ -32969,11 +32965,11 @@ var ProductTable = function (_React$Component) {
                 null,
                 React.createElement(
                     'table',
-                    { className: this.props.tableClassName || null },
+                    { className: this.props.tableClassName && this.props.tableClassName },
                     React.createElement(
                         'caption',
                         null,
-                        tableCaption
+                        this.props.name ? 'Список товаров магазина ' + this.props.name : 'Список товаров магазина ' + 'iShop'
                     ),
                     React.createElement(
                         'thead',
@@ -32988,7 +32984,7 @@ var ProductTable = function (_React$Component) {
                 ),
                 React.createElement(
                     'div',
-                    { className: "cardWrapper" },
+                    { className: 'cardWrapper' },
                     this.state.workMode !== 1 && this.state.workMode !== 2 && React.createElement('input', { type: 'button', onClick: this.addNew, value: 'New product' }),
                     this.state.workMode === 0 && React.createElement(ProductCard, {
                         name: this.state.selectedItem.name,
@@ -33008,7 +33004,7 @@ var ProductTable = function (_React$Component) {
                         price: this.state.editItem.price,
                         url: this.state.editItem.url,
                         quantity: this.state.editItem.quantity,
-                        cbDisableDel: this.changing,
+                        cbOnChange: this.changing,
                         cbUpdate: this.saveChanged
                     })
                 )
@@ -33749,40 +33745,45 @@ var ProductRecord = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductRecord.__proto__ || Object.getPrototypeOf(ProductRecord)).call.apply(_ref, [this].concat(args))), _this), _this.recordClicked = function (EO) {
-            _this.props.cbClicked({
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductRecord.__proto__ || Object.getPrototypeOf(ProductRecord)).call.apply(_ref, [this].concat(args))), _this), _this.clickHandler = function (EO) {
+            EO.stopPropagation();
+            EO.preventDefault();
+            _this.props.cbOnClick({
                 code: _this.props.code,
                 name: _this.props.name,
                 price: _this.props.price,
                 url: _this.props.url,
                 quantity: _this.props.quantity
             });
-        }, _this.recordDelete = function (EO) {
+        }, _this.editHandler = function (EO) {
             EO.stopPropagation();
-            if (confirm('\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u044C \u043E \u0442\u043E\u0432\u0430\u0440\u0435 ' + _this.props.name + '?')) _this.props.cbDelete(_this.props.code);else return;
-        }, _this.recordEdit = function (EO) {
-            EO.stopPropagation();
-            _this.props.cbEdit({
+            _this.props.cbOnEdit({
                 code: _this.props.code,
                 name: _this.props.name,
                 price: _this.props.price,
                 url: _this.props.url,
                 quantity: _this.props.quantity
             });
+        }, _this.deleteHandler = function (EO) {
+            EO.stopPropagation();
+            if (confirm('\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u044C \u043E \u0442\u043E\u0432\u0430\u0440\u0435 ' + _this.props.name + '?')) _this.props.cbOnDelete(_this.props.code);else return;
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(ProductRecord, [{
         key: 'render',
         value: function render() {
-            var alignedClassName = this.props.alignedClassName;
-            var selectedClassName = this.props.selectedItemCode === this.props.code ? this.props.selectedClassName : null;
+
+            var rowStateClass = void 0;
+            if (this.props.selectedItemCode === this.props.code) rowStateClass = this.props.selectedClassName;else if (this.props.disableControls) rowStateClass = 'nocontrols';else rowStateClass = null;
+
             return React.createElement(
                 'tr',
-                { className: selectedClassName, onClick: this.recordClicked },
+                { className: rowStateClass,
+                    onClick: this.props.cbOnClick && this.clickHandler },
                 React.createElement(
                     'td',
-                    { className: alignedClassName },
+                    { className: 'tal' },
                     this.props.name
                 ),
                 React.createElement(
@@ -33792,7 +33793,7 @@ var ProductRecord = function (_React$Component) {
                 ),
                 React.createElement(
                     'td',
-                    { className: alignedClassName },
+                    { className: 'tal' },
                     this.props.url
                 ),
                 React.createElement(
@@ -33803,10 +33804,10 @@ var ProductRecord = function (_React$Component) {
                 React.createElement(
                     'td',
                     null,
-                    React.createElement('input', { type: 'button', onClick: this.recordEdit, value: 'Edit',
-                        disabled: this.props.disableEdit }),
-                    React.createElement('input', { type: 'button', onClick: this.recordDelete, value: 'Delete',
-                        disabled: this.props.disableDelete })
+                    React.createElement('input', { type: 'button', onClick: this.props.cbOnEdit && this.editHandler,
+                        value: 'Edit' }),
+                    React.createElement('input', { type: 'button', onClick: this.props.cbOnDelete && this.deleteHandler,
+                        value: 'Delete' })
                 )
             );
         }
@@ -33822,12 +33823,11 @@ ProductRecord.propTypes = {
     url: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
     selectedClassName: PropTypes.string,
-    alignedClassName: PropTypes.string,
     selectedItemCode: PropTypes.number,
-    cbClicked: PropTypes.func.isRequired,
-    cbDelete: PropTypes.func.isRequired,
-    cbEdit: PropTypes.func.isRequired,
-    disableDelete: PropTypes.bool.isRequired
+    cbOnClick: PropTypes.func, // не передаю 
+    cbOnDelete: PropTypes.func, // когда контролы в таблице 
+    cbOnEdit: PropTypes.func, // и выделение рядов надо заблокировать
+    disableControls: PropTypes.bool.isRequired
 };
 
 
@@ -33962,7 +33962,7 @@ var ProductEditor = function (_React$Component) {
             quantity: _this.props.quantity
         }, _this.unsavedChanges = {}, _this.fieldChanged = function (EO) {
             EO.preventDefault();
-            _this.props.cbDisableDel(true);
+            _this.props.cbOnChange(true);
             var changedFieldName = EO.target.getAttribute("name");
 
             // TODO валидация
@@ -33980,7 +33980,12 @@ var ProductEditor = function (_React$Component) {
                 url: _this.state.url,
                 quantity: parseInt(_this.state.quantity)
             });
-            _this.props.cbDisableDel(false);
+            _this.props.cbOnChange(false);
+        }, _this.cancelUpdated = function (EO) {
+            EO.preventDefault();
+            _this.state({
+                unsavedChangesStatus: false
+            });
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -34018,8 +34023,9 @@ var ProductEditor = function (_React$Component) {
                 React.createElement('input', {
                     type: 'button',
                     name: 'save',
-                    value: 'Save',
-                    onClick: this.saveUpdated
+                    value: 'Save'
+                    // TODO валидация
+                    , onClick: this.saveUpdated
                 }),
                 React.createElement('input', {
                     type: 'button',
@@ -34040,7 +34046,7 @@ ProductEditor.propTypes = {
     price: PropTypes.number.isRequired,
     url: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
-    cbDisableDel: PropTypes.func.isRequired,
+    cbOnChange: PropTypes.func.isRequired,
     cbUpdate: PropTypes.func.isRequired
 };
 

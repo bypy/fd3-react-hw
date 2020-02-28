@@ -7,11 +7,12 @@ const ProductRecord = require('./ProductRecord');
 const ProductCard = require('./ProductCard');
 const ProductEditor = require('./ProductEditor');
 
-const selectedClassName = 'highlight';
-const alignedClassName = 'tal';
+//const selectedClassName = 'highlight';
 
 require('./ProductTable.css');
 class ProductTable extends React.Component {
+
+    selectedClassName = 'highlight';
 
     static propTypes = {
         tableClassName: PropTypes.string,
@@ -34,14 +35,14 @@ class ProductTable extends React.Component {
         stuff: this.props.items
     };
 
-    clicked = (clikedItem) => {
+    clickHandler = (clikedItem) => {
         this.setState({
             workMode: 0,
             selectedItem: clikedItem,
         });
     };
 
-    edit = (editItem) => {
+    editHandler = (editItem) => {
         this.setState({
             workMode: 2,
             selectedItem: null,
@@ -49,7 +50,7 @@ class ProductTable extends React.Component {
         });
     };
     
-    del = (code) => {
+    deleteHandler = (code) => {
         let newTableStuff = this.state.stuff.filter((el, i) => {
             if (i === code) return false;
             else return true;
@@ -108,18 +109,14 @@ class ProductTable extends React.Component {
 
     render() {
 
-        let tableCaption = this.props.name
-            ? 'Список товаров магазина ' + this.props.name
-            : 'Список товаров магазина ' + 'iShop';
-
         let keyCode = -1; 
         let tableHead = 
             <tr key={keyCode} onClick = {this.deselect}>
-                <th data-type = "name">{"Название"}</th>
-                <th data-type = "cost">{"Цена, USD"}</th>
-                <th data-type = "url">{"Ссылка"}</th>
-                <th data-type = "count">{"Ед. в наличии"}</th>
-                <th data-type = "control">{"Управление"}</th>
+                <th data-type = 'name'>Название</th>
+                <th data-type = 'cost'>Цена, USD</th>
+                <th data-type = 'url'>Ссылка</th>
+                <th data-type = 'count'>Ед. в наличии</th>
+                <th data-type = 'control'>Управление</th>
             </tr>
         ;
 
@@ -131,23 +128,28 @@ class ProductTable extends React.Component {
                 price = { v.price }
                 url = { v.url }
                 quantity = { v.quantity }
-                selectedClassName = { selectedClassName }
-                alignedClassName = { alignedClassName }
+                selectedClassName = { this.selectedClassName }
                 selectedItemCode = {
                     (this.state.selectedItem) && 
                     this.state.selectedItem.code
                 }
-                cbClicked = { this.clicked }
-                cbDelete = { this.del }
-                cbEdit = { this.edit }
-                disableDelete = { this.state.unsaved }
+                cbOnClick = { this.state.unsaved ? null : this.clickHandler }
+                cbOnDelete = { this.state.unsaved ? null : this.deleteHandler }
+                cbOnEdit = { this.state.unsaved ? null : this.editHandler }
+                disableControls = { this.state.unsaved }
             />
         );
 
         return (
             <Fragment>
-                <table className = { this.props.tableClassName || null } >
-                    <caption>{ tableCaption }</caption>
+                <table className = { this.props.tableClassName && this.props.tableClassName } >
+                    <caption>
+                        { this.props.name ? 
+                            'Список товаров магазина ' + this.props.name
+                            :
+                            'Список товаров магазина ' + 'iShop'
+                        }
+                    </caption>
                     <thead>
                         { tableHead }
                     </thead>
@@ -155,10 +157,10 @@ class ProductTable extends React.Component {
                         { tableBody }
                     </tbody>
                 </table>
-                <div className={"cardWrapper"}>
+                <div className='cardWrapper'>
                 {
                     (this.state.workMode !== 1 && this.state.workMode !== 2) &&
-                    <input type={ 'button' } onClick={ this.addNew } value={ 'New product' } />
+                    <input type='button' onClick={ this.addNew } value='New product' />
                 }
                 {
                     (this.state.workMode === 0) &&
@@ -182,7 +184,7 @@ class ProductTable extends React.Component {
                         price = { this.state.editItem.price }
                         url = { this.state.editItem.url }
                         quantity = { this.state.editItem.quantity }
-                        cbDisableDel = { this.changing }
+                        cbOnChange = { this.changing }
                         cbUpdate = { this.saveChanged }    
                     />
                 }

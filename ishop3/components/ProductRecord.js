@@ -12,16 +12,17 @@ class ProductRecord extends React.Component {
         url: PropTypes.string.isRequired,
         quantity: PropTypes.number.isRequired,
         selectedClassName: PropTypes.string,
-        alignedClassName: PropTypes.string,
         selectedItemCode: PropTypes.number,
-        cbClicked: PropTypes.func.isRequired,
-        cbDelete: PropTypes.func.isRequired,
-        cbEdit: PropTypes.func.isRequired,
-        disableDelete: PropTypes.bool.isRequired,
+        cbOnClick: PropTypes.func, // не передаю 
+        cbOnDelete: PropTypes.func, // когда контролы в таблице 
+        cbOnEdit: PropTypes.func, // и выделение рядов надо заблокировать
+        disableControls: PropTypes.bool.isRequired,
     };
 
-    recordClicked = (EO) => {
-        this.props.cbClicked({
+    clickHandler = (EO) => {
+        EO.stopPropagation();
+        EO.preventDefault();
+        this.props.cbOnClick({
             code: this.props.code,
             name: this.props.name,
             price: this.props.price,
@@ -30,17 +31,9 @@ class ProductRecord extends React.Component {
         });
     };
 
-    recordDelete = (EO) => {
+    editHandler = (EO) => {
         EO.stopPropagation();
-        if (confirm(`Удалить запись о товаре ${this.props.name}?`))
-            this.props.cbDelete(this.props.code);
-        else
-            return;
-    };
-
-    recordEdit = (EO) => {
-        EO.stopPropagation();
-        this.props.cbEdit({
+        this.props.cbOnEdit({
             code:       this.props.code,
             name:       this.props.name,
             price:      this.props.price,
@@ -49,22 +42,37 @@ class ProductRecord extends React.Component {
         });
     };
 
+    deleteHandler = (EO) => {
+        EO.stopPropagation();
+        if (confirm(`Удалить запись о товаре ${this.props.name}?`))
+            this.props.cbOnDelete(this.props.code);
+        else
+            return;
+    };
+
     render() {
-        let alignedClassName = this.props.alignedClassName;
-        let selectedClassName = (this.props.selectedItemCode === this.props.code)
-            ? this.props.selectedClassName
-            : null;
+
+        let rowStateClass;
+        if (this.props.selectedItemCode === this.props.code)
+            rowStateClass = this.props.selectedClassName
+        else if (this.props.disableControls)
+            rowStateClass = 'nocontrols'
+        else
+            rowStateClass = null
+
         return (
-            <tr className={ selectedClassName } onClick={ this.recordClicked }>
-                <td className={ alignedClassName }>{ this.props.name }</td>
+            <tr className={ rowStateClass }
+                onClick={ this.props.cbOnClick && this.clickHandler }>
+                
+                <td className='tal'>{ this.props.name }</td>
                 <td>{ this.props.price }</td>
-                <td className={ alignedClassName }>{ this.props.url }</td>
+                <td className='tal'>{ this.props.url }</td>
                 <td>{ this.props.quantity }</td>
                 <td> 
-                    <input type={ 'button' } onClick={ this.recordEdit } value={ 'Edit' }
-                        disabled={ this.props.disableEdit } />
-                    <input type={ 'button' } onClick={ this.recordDelete } value={ 'Delete' }
-                        disabled={ this.props.disableDelete } />
+                    <input type='button' onClick={ this.props.cbOnEdit && this.editHandler }
+                        value={ 'Edit' }/>
+                    <input type='button' onClick={ this.props.cbOnDelete && this.deleteHandler }
+                        value={ 'Delete' }/>
                 </td>
             </tr>
         );

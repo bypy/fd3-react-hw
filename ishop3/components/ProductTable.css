@@ -48,6 +48,10 @@
     background-color: #f00;
 }
 
+.ProductTable .nocontrols * {
+    cursor: not-allowed;
+}
+
 .ProductTable td input {
     width: 100%;
     cursor: pointer;

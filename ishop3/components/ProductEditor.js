@@ -10,7 +10,7 @@ class ProductEditor extends React.Component {
         price: PropTypes.number.isRequired,
         url: PropTypes.string.isRequired,
         quantity: PropTypes.number.isRequired,
-        cbDisableDel: PropTypes.func.isRequired,
+        cbOnChange: PropTypes.func.isRequired,
         cbUpdate: PropTypes.func.isRequired,
     };
 
@@ -26,7 +26,7 @@ class ProductEditor extends React.Component {
 
     fieldChanged = (EO) => {
         EO.preventDefault();
-        this.props.cbDisableDel(true);
+        this.props.cbOnChange(true);
         let changedFieldName = EO.target.getAttribute("name");
         
         // TODO валидация
@@ -47,7 +47,14 @@ class ProductEditor extends React.Component {
             url: this.state.url,
             quantity: parseInt(this.state.quantity),
         });
-        this.props.cbDisableDel(false);
+        this.props.cbOnChange(false);
+    }
+
+    cancelUpdated = (EO) => {
+        EO.preventDefault();
+        this.state({
+            unsavedChangesStatus: false,
+        })
     }
 
     render() {
@@ -82,6 +89,7 @@ class ProductEditor extends React.Component {
                     type="button"
                     name="save"
                     value="Save"
+                    // TODO валидация
                     onClick={ this.saveUpdated }
                 />
                 <input
