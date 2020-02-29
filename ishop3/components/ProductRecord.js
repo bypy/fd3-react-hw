@@ -33,6 +33,7 @@ class ProductRecord extends React.Component {
 
     editHandler = (EO) => {
         EO.stopPropagation();
+        EO.target.blur();
         this.props.cbOnEdit({
             code:       this.props.code,
             name:       this.props.name,
@@ -44,6 +45,7 @@ class ProductRecord extends React.Component {
 
     deleteHandler = (EO) => {
         EO.stopPropagation();
+        EO.target.blur(); //  отменить "наследование" фокуса кнопкой следующего ряда (Firefox)
         if (confirm(`Удалить запись о товаре ${this.props.name}?`))
             this.props.cbOnDelete(this.props.code);
         else

@@ -12,6 +12,7 @@ class ProductEditor extends React.Component {
         quantity: PropTypes.number.isRequired,
         cbOnChange: PropTypes.func.isRequired,
         cbOnSave: PropTypes.func.isRequired,
+        cbOnCancel: PropTypes.func.isRequired
     };
 
     state = {
@@ -52,16 +53,20 @@ class ProductEditor extends React.Component {
 
     cancelHandler = (EO) => {
         EO.preventDefault();
-        this.state({
-            unsavedChangesStatus: false,
-        })
+        this.props.cbOnCancel();
     }
 
     render() {
 
         return (
             <div className={ "ProductCard" }>
-                <h2>Product editor</h2>
+                <h2>
+                    { (this.props.price === 0 && this.props.quantity === 0) ?
+                        'Add new product'
+                        :
+                        'Product editor'
+                    }
+                </h2>
                 <p>ID: { this.props.code }</p>
 
                 <span>Name: </span>

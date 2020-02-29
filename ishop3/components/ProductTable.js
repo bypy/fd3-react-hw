@@ -7,13 +7,10 @@ const ProductRecord = require('./ProductRecord');
 const ProductCard = require('./ProductCard');
 const ProductEditor = require('./ProductEditor');
 
-//const selectedClassName = 'highlight';
-
 require('./ProductTable.css');
 class ProductTable extends React.Component {
 
-    selectedClassName = 'highlight';
-
+    
     static propTypes = {
         tableClassName: PropTypes.string,
         name: PropTypes.string,
@@ -24,14 +21,16 @@ class ProductTable extends React.Component {
                 url: PropTypes.string.isRequired,
                 quantity: PropTypes.number.isRequired
             })
-        ),
-    };
+            ),
+        };
+        
+    selectedClassName = 'highlight';
 
     state = {
         workMode: null,
         unsaved: false,
-        selectedItem: {},
-        editItem: {},
+        selectedItem: null,
+        editItem: null,
         stuff: this.props.items
     };
 
@@ -46,7 +45,7 @@ class ProductTable extends React.Component {
         this.setState({
             workMode: 2,
             selectedItem: null,
-            editItem: editItem
+            editItem: editItem,
         });
     };
     
@@ -58,51 +57,56 @@ class ProductTable extends React.Component {
         this.setState({ 
             stuff: newTableStuff,
             workMode: null,
-            selectedItem: { 
-                code: null
-            }
-        });
-    };
-    
-    deselectHandler = (EO) => {
-        this.setState({
-            workMode: null,
-            selectedItem: { 
-                code: null,
-            }
+            selectedItem: null
         });
     };
 
-    addHandler = () => {
+    addNewHandler = () => {
         this.setState({
             workMode: 1,
         })
     };
-
-    changeHandler = (flag) => {
+    
+    cancelHandler = () => {
         this.setState({
-            unsaved: flag
+            workMode: null,
+            selectedItem:  null,
+            unsaved: false
         });
     };
 
-    saveHandler = (updatedItem) => {
-        let targetIndex = null;
-        this.state.stuff.forEach((el, i) => {
-            if (i === updatedItem.code) {
-                targetIndex = i;
-            }
-        });
-        if (targetIndex !== null) {
-            let newTableStuff = this.state.stuff.slice();
-            newTableStuff[targetIndex] = updatedItem;
+    unsavedHandler = (flag) => {
+        if (flag !== this.state.unsaved) {
             this.setState({
-                stuff: newTableStuff,
-                workMode: null,
-                selectedItem: { 
-                    code: null
-                }
+                unsaved: flag
             });
         }
+    };
+
+    saveHandler = (recordH) => {
+        let newTableStuff = this.state.stuff.slice();
+
+        if ( recordH.code === this.state.stuff.length ) {
+            // новый товар
+            newTableStuff.push(recordH);
+        } else {
+            // редактируемый товар
+            let targetIndex = null;
+            this.state.stuff.forEach((el, i) => {
+                if (i === recordH.code) {
+                    targetIndex = i;
+                }
+            });
+            if (targetIndex !== null) {
+                newTableStuff[targetIndex] = recordH;
+            }
+        }
+        
+        this.setState({
+            stuff: newTableStuff,
+            workMode: null,
+        });
+
     };
 
 
@@ -111,7 +115,7 @@ class ProductTable extends React.Component {
 
         let keyCode = -1; 
         let tableHead = 
-            <tr key={keyCode} onClick = {this.deselectHandler}>
+            <tr key={keyCode} onClick = {!this.state.workMode ? this.cancelHandler : null}>
                 <th data-type = 'name'>Название</th>
                 <th data-type = 'cost'>Цена, USD</th>
                 <th data-type = 'url'>Ссылка</th>
@@ -160,10 +164,10 @@ class ProductTable extends React.Component {
                 <div className='cardWrapper'>
                 {
                     (this.state.workMode !== 1 && this.state.workMode !== 2) &&
-                    <input type='button' onClick={ this.addHandler } value='New product' />
+                    <input type='button' onClick={ this.addNewHandler } value='New product' />
                 }
                 {
-                    (this.state.workMode === 0) &&
+                    (this.state.workMode === 0) && // preview product
                     <ProductCard
                         name = { this.state.selectedItem.name }
                         price = { this.state.selectedItem.price }
@@ -172,11 +176,20 @@ class ProductTable extends React.Component {
                     />
                 }
                 {
-                    (this.state.workMode === 1) &&
-                    <p>Компонент нового товара здесь</p>
+                    (this.state.workMode === 1) && // new product
+                    <ProductEditor
+                        code = { this.state.stuff.length } // -1 сигнализирует о новом товаре
+                        name = { '' }
+                        price = { 0 }
+                        url = ''
+                        quantity = { 0 }
+                        cbOnChange = { this.unsavedHandler }
+                        cbOnSave = { this.saveHandler }
+                        cbOnCancel = { this.cancelHandler }
+                    />
                 }
                 {
-                    (this.state.workMode === 2) &&
+                    (this.state.workMode === 2) && // edit product
                     <ProductEditor
                         key={ this.state.editItem.code } 
                         code = { this.state.editItem.code }
@@ -184,8 +197,9 @@ class ProductTable extends React.Component {
                         price = { this.state.editItem.price }
                         url = { this.state.editItem.url }
                         quantity = { this.state.editItem.quantity }
-                        cbOnChange = { this.changeHandler }
-                        cbOnSave = { this.saveHandler }    
+                        cbOnChange = { this.unsavedHandler }
+                        cbOnSave = { this.saveHandler } 
+                        cbOnCancel = { this.cancelHandler }  
                     />
                 }
                 </div>

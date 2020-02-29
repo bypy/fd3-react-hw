@@ -32825,8 +32825,6 @@ var ProductRecord = __webpack_require__(28);
 var ProductCard = __webpack_require__(30);
 var ProductEditor = __webpack_require__(32);
 
-//const selectedClassName = 'highlight';
-
 __webpack_require__(33);
 
 var ProductTable = function (_React$Component) {
@@ -32846,8 +32844,8 @@ var ProductTable = function (_React$Component) {
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductTable.__proto__ || Object.getPrototypeOf(ProductTable)).call.apply(_ref, [this].concat(args))), _this), _this.selectedClassName = 'highlight', _this.state = {
             workMode: null,
             unsaved: false,
-            selectedItem: {},
-            editItem: {},
+            selectedItem: null,
+            editItem: null,
             stuff: _this.props.items
         }, _this.clickHandler = function (clikedItem) {
             _this.setState({
@@ -32867,43 +32865,47 @@ var ProductTable = function (_React$Component) {
             _this.setState({
                 stuff: newTableStuff,
                 workMode: null,
-                selectedItem: {
-                    code: null
-                }
+                selectedItem: null
             });
-        }, _this.deselectHandler = function (EO) {
-            _this.setState({
-                workMode: null,
-                selectedItem: {
-                    code: null
-                }
-            });
-        }, _this.addHandler = function () {
+        }, _this.addNewHandler = function () {
             _this.setState({
                 workMode: 1
             });
-        }, _this.changeHandler = function (flag) {
+        }, _this.cancelHandler = function () {
             _this.setState({
-                unsaved: flag
+                workMode: null,
+                selectedItem: null,
+                unsaved: false
             });
-        }, _this.saveHandler = function (updatedItem) {
-            var targetIndex = null;
-            _this.state.stuff.forEach(function (el, i) {
-                if (i === updatedItem.code) {
-                    targetIndex = i;
-                }
-            });
-            if (targetIndex !== null) {
-                var newTableStuff = _this.state.stuff.slice();
-                newTableStuff[targetIndex] = updatedItem;
+        }, _this.unsavedHandler = function (flag) {
+            if (flag !== _this.state.unsaved) {
                 _this.setState({
-                    stuff: newTableStuff,
-                    workMode: null,
-                    selectedItem: {
-                        code: null
-                    }
+                    unsaved: flag
                 });
             }
+        }, _this.saveHandler = function (recordH) {
+            var newTableStuff = _this.state.stuff.slice();
+
+            if (recordH.code === _this.state.stuff.length) {
+                // новый товар
+                newTableStuff.push(recordH);
+            } else {
+                // редактируемый товар
+                var targetIndex = null;
+                _this.state.stuff.forEach(function (el, i) {
+                    if (i === recordH.code) {
+                        targetIndex = i;
+                    }
+                });
+                if (targetIndex !== null) {
+                    newTableStuff[targetIndex] = recordH;
+                }
+            }
+
+            _this.setState({
+                stuff: newTableStuff,
+                workMode: null
+            });
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -32915,7 +32917,7 @@ var ProductTable = function (_React$Component) {
             var keyCode = -1;
             var tableHead = React.createElement(
                 'tr',
-                { key: keyCode, onClick: this.deselectHandler },
+                { key: keyCode, onClick: !this.state.workMode ? this.cancelHandler : null },
                 React.createElement(
                     'th',
                     { 'data-type': 'name' },
@@ -32985,27 +32987,36 @@ var ProductTable = function (_React$Component) {
                 React.createElement(
                     'div',
                     { className: 'cardWrapper' },
-                    this.state.workMode !== 1 && this.state.workMode !== 2 && React.createElement('input', { type: 'button', onClick: this.addHandler, value: 'New product' }),
-                    this.state.workMode === 0 && React.createElement(ProductCard, {
+                    this.state.workMode !== 1 && this.state.workMode !== 2 && React.createElement('input', { type: 'button', onClick: this.addNewHandler, value: 'New product' }),
+                    this.state.workMode === 0 && // preview product
+                    React.createElement(ProductCard, {
                         name: this.state.selectedItem.name,
                         price: this.state.selectedItem.price,
                         url: this.state.selectedItem.url,
                         quantity: this.state.selectedItem.quantity
                     }),
-                    this.state.workMode === 1 && React.createElement(
-                        'p',
-                        null,
-                        '\u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u043D\u043E\u0432\u043E\u0433\u043E \u0442\u043E\u0432\u0430\u0440\u0430 \u0437\u0434\u0435\u0441\u044C'
-                    ),
-                    this.state.workMode === 2 && React.createElement(ProductEditor, {
+                    this.state.workMode === 1 && // new product
+                    React.createElement(ProductEditor, {
+                        code: this.state.stuff.length // -1 сигнализирует о новом товаре
+                        , name: '',
+                        price: 0,
+                        url: '',
+                        quantity: 0,
+                        cbOnChange: this.unsavedHandler,
+                        cbOnSave: this.saveHandler,
+                        cbOnCancel: this.cancelHandler
+                    }),
+                    this.state.workMode === 2 && // edit product
+                    React.createElement(ProductEditor, {
                         key: this.state.editItem.code,
                         code: this.state.editItem.code,
                         name: this.state.editItem.name,
                         price: this.state.editItem.price,
                         url: this.state.editItem.url,
                         quantity: this.state.editItem.quantity,
-                        cbOnChange: this.changeHandler,
-                        cbOnSave: this.saveHandler
+                        cbOnChange: this.unsavedHandler,
+                        cbOnSave: this.saveHandler,
+                        cbOnCancel: this.cancelHandler
                     })
                 )
             );
@@ -33757,6 +33768,7 @@ var ProductRecord = function (_React$Component) {
             });
         }, _this.editHandler = function (EO) {
             EO.stopPropagation();
+            EO.target.blur();
             _this.props.cbOnEdit({
                 code: _this.props.code,
                 name: _this.props.name,
@@ -33766,6 +33778,7 @@ var ProductRecord = function (_React$Component) {
             });
         }, _this.deleteHandler = function (EO) {
             EO.stopPropagation();
+            EO.target.blur(); //  отменить "наследование" фокуса кнопкой следующего ряда (Firefox)
             if (confirm('\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u044C \u043E \u0442\u043E\u0432\u0430\u0440\u0435 ' + _this.props.name + '?')) _this.props.cbOnDelete(_this.props.code);else return;
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
@@ -33983,9 +33996,7 @@ var ProductEditor = function (_React$Component) {
             _this.props.cbOnChange(false);
         }, _this.cancelHandler = function (EO) {
             EO.preventDefault();
-            _this.state({
-                unsavedChangesStatus: false
-            });
+            _this.props.cbOnCancel();
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -33999,7 +34010,7 @@ var ProductEditor = function (_React$Component) {
                 React.createElement(
                     'h2',
                     null,
-                    'Product editor'
+                    this.props.price === 0 && this.props.quantity === 0 ? 'Add new product' : 'Product editor'
                 ),
                 React.createElement(
                     'p',
@@ -34078,7 +34089,8 @@ ProductEditor.propTypes = {
     url: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
     cbOnChange: PropTypes.func.isRequired,
-    cbOnSave: PropTypes.func.isRequired
+    cbOnSave: PropTypes.func.isRequired,
+    cbOnCancel: PropTypes.func.isRequired
 };
 
 
