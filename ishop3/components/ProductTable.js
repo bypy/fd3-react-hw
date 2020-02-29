@@ -64,7 +64,7 @@ class ProductTable extends React.Component {
         });
     };
     
-    deselect = (EO) => {
+    deselectHandler = (EO) => {
         this.setState({
             workMode: null,
             selectedItem: { 
@@ -73,19 +73,19 @@ class ProductTable extends React.Component {
         });
     };
 
-    addNew = () => {
+    addHandler = () => {
         this.setState({
             workMode: 1,
         })
     };
 
-    changing = (flag) => {
+    changeHandler = (flag) => {
         this.setState({
             unsaved: flag
         });
     };
 
-    saveChanged = (updatedItem) => {
+    saveHandler = (updatedItem) => {
         let targetIndex = null;
         this.state.stuff.forEach((el, i) => {
             if (i === updatedItem.code) {
@@ -111,7 +111,7 @@ class ProductTable extends React.Component {
 
         let keyCode = -1; 
         let tableHead = 
-            <tr key={keyCode} onClick = {this.deselect}>
+            <tr key={keyCode} onClick = {this.deselectHandler}>
                 <th data-type = 'name'>Название</th>
                 <th data-type = 'cost'>Цена, USD</th>
                 <th data-type = 'url'>Ссылка</th>
@@ -160,7 +160,7 @@ class ProductTable extends React.Component {
                 <div className='cardWrapper'>
                 {
                     (this.state.workMode !== 1 && this.state.workMode !== 2) &&
-                    <input type='button' onClick={ this.addNew } value='New product' />
+                    <input type='button' onClick={ this.addHandler } value='New product' />
                 }
                 {
                     (this.state.workMode === 0) &&
@@ -184,8 +184,8 @@ class ProductTable extends React.Component {
                         price = { this.state.editItem.price }
                         url = { this.state.editItem.url }
                         quantity = { this.state.editItem.quantity }
-                        cbOnChange = { this.changing }
-                        cbUpdate = { this.saveChanged }    
+                        cbOnChange = { this.changeHandler }
+                        cbOnSave = { this.saveHandler }    
                     />
                 }
                 </div>

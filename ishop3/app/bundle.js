@@ -32871,22 +32871,22 @@ var ProductTable = function (_React$Component) {
                     code: null
                 }
             });
-        }, _this.deselect = function (EO) {
+        }, _this.deselectHandler = function (EO) {
             _this.setState({
                 workMode: null,
                 selectedItem: {
                     code: null
                 }
             });
-        }, _this.addNew = function () {
+        }, _this.addHandler = function () {
             _this.setState({
                 workMode: 1
             });
-        }, _this.changing = function (flag) {
+        }, _this.changeHandler = function (flag) {
             _this.setState({
                 unsaved: flag
             });
-        }, _this.saveChanged = function (updatedItem) {
+        }, _this.saveHandler = function (updatedItem) {
             var targetIndex = null;
             _this.state.stuff.forEach(function (el, i) {
                 if (i === updatedItem.code) {
@@ -32915,7 +32915,7 @@ var ProductTable = function (_React$Component) {
             var keyCode = -1;
             var tableHead = React.createElement(
                 'tr',
-                { key: keyCode, onClick: this.deselect },
+                { key: keyCode, onClick: this.deselectHandler },
                 React.createElement(
                     'th',
                     { 'data-type': 'name' },
@@ -32985,7 +32985,7 @@ var ProductTable = function (_React$Component) {
                 React.createElement(
                     'div',
                     { className: 'cardWrapper' },
-                    this.state.workMode !== 1 && this.state.workMode !== 2 && React.createElement('input', { type: 'button', onClick: this.addNew, value: 'New product' }),
+                    this.state.workMode !== 1 && this.state.workMode !== 2 && React.createElement('input', { type: 'button', onClick: this.addHandler, value: 'New product' }),
                     this.state.workMode === 0 && React.createElement(ProductCard, {
                         name: this.state.selectedItem.name,
                         price: this.state.selectedItem.price,
@@ -33004,8 +33004,8 @@ var ProductTable = function (_React$Component) {
                         price: this.state.editItem.price,
                         url: this.state.editItem.url,
                         quantity: this.state.editItem.quantity,
-                        cbOnChange: this.changing,
-                        cbUpdate: this.saveChanged
+                        cbOnChange: this.changeHandler,
+                        cbOnSave: this.saveHandler
                     })
                 )
             );
@@ -33956,24 +33956,24 @@ var ProductEditor = function (_React$Component) {
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ProductEditor.__proto__ || Object.getPrototypeOf(ProductEditor)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             unsavedChangesStatus: false,
+            validStatus: true,
             name: _this.props.name,
             price: _this.props.price,
             url: _this.props.url,
             quantity: _this.props.quantity
-        }, _this.unsavedChanges = {}, _this.fieldChanged = function (EO) {
+        }, _this.unsavedChanges = {}, _this.changeHandler = function (EO) {
             EO.preventDefault();
             _this.props.cbOnChange(true);
-            var changedFieldName = EO.target.getAttribute("name");
 
             // TODO валидация
-            _this.unsavedChanges[changedFieldName] = EO.target.value;
+            _this.unsavedChanges[EO.target.name] = EO.target.value;
 
             _this.setState(_defineProperty({
                 unsavedChangesStatus: true
-            }, changedFieldName, EO.target.value));
-        }, _this.saveUpdated = function (EO) {
+            }, EO.target.name, EO.target.value));
+        }, _this.saveHandler = function (EO) {
             EO.preventDefault();
-            _this.props.cbUpdate({
+            _this.props.cbOnSave({
                 code: _this.props.code, // компонент не изменяет код товара
                 name: _this.state.name,
                 price: parseFloat(_this.state.price),
@@ -33981,7 +33981,7 @@ var ProductEditor = function (_React$Component) {
                 quantity: parseInt(_this.state.quantity)
             });
             _this.props.cbOnChange(false);
-        }, _this.cancelUpdated = function (EO) {
+        }, _this.cancelHandler = function (EO) {
             EO.preventDefault();
             _this.state({
                 unsavedChangesStatus: false
@@ -33996,28 +33996,59 @@ var ProductEditor = function (_React$Component) {
             return React.createElement(
                 'div',
                 { className: "ProductCard" },
+                React.createElement(
+                    'h2',
+                    null,
+                    'Product editor'
+                ),
+                React.createElement(
+                    'p',
+                    null,
+                    'ID: ',
+                    this.props.code
+                ),
+                React.createElement(
+                    'span',
+                    null,
+                    'Name: '
+                ),
                 React.createElement('input', {
                     type: 'text',
                     name: 'name',
-                    onChange: this.fieldChanged,
+                    onChange: this.changeHandler,
                     value: this.state.name
                 }),
+                React.createElement(
+                    'span',
+                    null,
+                    'Price: '
+                ),
                 React.createElement('input', {
                     type: 'text',
                     name: 'price',
-                    onChange: this.fieldChanged,
+                    onChange: this.changeHandler,
                     value: this.state.price
                 }),
+                React.createElement(
+                    'span',
+                    null,
+                    'URL: '
+                ),
                 React.createElement('input', {
                     type: 'text',
                     name: 'url',
-                    onChange: this.fieldChanged,
+                    onChange: this.changeHandler,
                     value: this.state.url
                 }),
+                React.createElement(
+                    'span',
+                    null,
+                    'Quantity: '
+                ),
                 React.createElement('input', {
                     type: 'text',
                     name: 'quantity',
-                    onChange: this.fieldChanged,
+                    onChange: this.changeHandler,
                     value: this.state.quantity
                 }),
                 React.createElement('input', {
@@ -34025,13 +34056,13 @@ var ProductEditor = function (_React$Component) {
                     name: 'save',
                     value: 'Save'
                     // TODO валидация
-                    , onClick: this.saveUpdated
+                    , onClick: this.saveHandler
                 }),
                 React.createElement('input', {
                     type: 'button',
                     name: 'cancel',
                     value: 'Cancel',
-                    onClick: this.cancelUpdated
+                    onClick: this.cancelHandler
                 })
             );
         }
@@ -34047,7 +34078,7 @@ ProductEditor.propTypes = {
     url: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
     cbOnChange: PropTypes.func.isRequired,
-    cbUpdate: PropTypes.func.isRequired
+    cbOnSave: PropTypes.func.isRequired
 };
 
 

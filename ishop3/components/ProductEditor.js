@@ -11,11 +11,12 @@ class ProductEditor extends React.Component {
         url: PropTypes.string.isRequired,
         quantity: PropTypes.number.isRequired,
         cbOnChange: PropTypes.func.isRequired,
-        cbUpdate: PropTypes.func.isRequired,
+        cbOnSave: PropTypes.func.isRequired,
     };
 
     state = {
         unsavedChangesStatus: false,
+        validStatus: true,
         name: this.props.name,
         price: this.props.price,
         url: this.props.url,
@@ -24,23 +25,22 @@ class ProductEditor extends React.Component {
 
     unsavedChanges = {};
 
-    fieldChanged = (EO) => {
+    changeHandler = (EO) => {
         EO.preventDefault();
         this.props.cbOnChange(true);
-        let changedFieldName = EO.target.getAttribute("name");
         
         // TODO валидация
-        this.unsavedChanges[changedFieldName] = EO.target.value;
+        this.unsavedChanges[EO.target.name] = EO.target.value;
 
         this.setState({
             unsavedChangesStatus: true,
-            [changedFieldName]: EO.target.value
+            [EO.target.name]: EO.target.value
         })
     };
 
-    saveUpdated = (EO) => {
+    saveHandler = (EO) => {
         EO.preventDefault();
-        this.props.cbUpdate({
+        this.props.cbOnSave({
             code: this.props.code, // компонент не изменяет код товара
             name: this.state.name,
             price: parseFloat(this.state.price),
@@ -50,7 +50,7 @@ class ProductEditor extends React.Component {
         this.props.cbOnChange(false);
     }
 
-    cancelUpdated = (EO) => {
+    cancelHandler = (EO) => {
         EO.preventDefault();
         this.state({
             unsavedChangesStatus: false,
@@ -61,28 +61,35 @@ class ProductEditor extends React.Component {
 
         return (
             <div className={ "ProductCard" }>
+                <h2>Product editor</h2>
+                <p>ID: { this.props.code }</p>
+
+                <span>Name: </span>
                 <input
                     type="text"
                     name="name"
-                    onChange={ this.fieldChanged }
+                    onChange={ this.changeHandler }
                     value={ this.state.name }
                 />
+                <span>Price: </span>
                 <input
                     type="text"
                     name="price"
-                    onChange={ this.fieldChanged }
+                    onChange={ this.changeHandler }
                     value={ this.state.price }
                 />
+                <span>URL: </span>
                 <input
                     type="text"
                     name="url"
-                    onChange={ this.fieldChanged }
+                    onChange={ this.changeHandler }
                     value={ this.state.url }
                 />
+                <span>Quantity: </span>
                 <input
                     type="text"
                     name="quantity"
-                    onChange={ this.fieldChanged }
+                    onChange={ this.changeHandler }
                     value={ this.state.quantity }
                 />
                 <input
@@ -90,13 +97,13 @@ class ProductEditor extends React.Component {
                     name="save"
                     value="Save"
                     // TODO валидация
-                    onClick={ this.saveUpdated }
+                    onClick={ this.saveHandler }
                 />
                 <input
                     type="button"
                     name="cancel"
                     value="Cancel"
-                    onClick={ this.cancelUpdated }
+                    onClick={ this.cancelHandler }
                 />
             </div>
         );
