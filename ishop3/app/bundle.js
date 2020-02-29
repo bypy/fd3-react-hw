@@ -617,7 +617,7 @@ var ReactDOM = __webpack_require__(14);
 
 var ProductTable = __webpack_require__(24);
 
-var shopItems = __webpack_require__(34);
+var shopItems = __webpack_require__(35);
 
 // данные для заполнения в компоненте
 var shopName = 'ishop2';
@@ -32825,7 +32825,7 @@ var ProductRecord = __webpack_require__(28);
 var ProductCard = __webpack_require__(30);
 var ProductEditor = __webpack_require__(32);
 
-__webpack_require__(33);
+__webpack_require__(34);
 
 var ProductTable = function (_React$Component) {
     _inherits(ProductTable, _React$Component);
@@ -32877,12 +32877,11 @@ var ProductTable = function (_React$Component) {
                 selectedItem: null,
                 unsaved: false
             });
-        }, _this.unsavedHandler = function (flag) {
-            if (flag !== _this.state.unsaved) {
-                _this.setState({
-                    unsaved: flag
-                });
-            }
+        }, _this.unsavedHandler = function (boolFlag) {
+            // режим запрещающего курсора и блокировки контролов таблицы товаров
+            _this.setState({
+                unsaved: boolFlag
+            });
         }, _this.saveHandler = function (recordH) {
             var newTableStuff = _this.state.stuff.slice();
 
@@ -33953,6 +33952,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var React = __webpack_require__(1);
 var PropTypes = __webpack_require__(3);
 
+var _require = __webpack_require__(33),
+    isError = _require.isError;
+
 var ProductEditor = function (_React$Component) {
     _inherits(ProductEditor, _React$Component);
 
@@ -33974,11 +33976,15 @@ var ProductEditor = function (_React$Component) {
             price: _this.props.price,
             url: _this.props.url,
             quantity: _this.props.quantity
-        }, _this.unsavedChanges = {}, _this.changeHandler = function (EO) {
+        }, _this.unsavedChanges = {}, _this.errors = {}, _this.changeHandler = function (EO) {
             EO.preventDefault();
-            _this.props.cbOnChange(true);
+            if (!_this.state.unsavedChangesStatus) {
+                // при первом изменении поля вызвать коллбек,
+                // блокирующий контролы таблицы товаров
+                _this.props.cbOnChange(true);
+            }
 
-            // TODO валидация
+            // обновляем в state значение для данного поля
             _this.unsavedChanges[EO.target.name] = EO.target.value;
 
             _this.setState(_defineProperty({
@@ -33988,10 +33994,10 @@ var ProductEditor = function (_React$Component) {
             EO.preventDefault();
             _this.props.cbOnSave({
                 code: _this.props.code, // компонент не изменяет код товара
-                name: _this.state.name,
-                price: parseFloat(_this.state.price),
-                url: _this.state.url,
-                quantity: parseInt(_this.state.quantity)
+                name: _this.state.name.trim(),
+                price: Number(_this.state.price),
+                url: _this.state.url.trim(),
+                quantity: Number(_this.state.quantity)
             });
             _this.props.cbOnChange(false);
         }, _this.cancelHandler = function (EO) {
@@ -34004,9 +34010,16 @@ var ProductEditor = function (_React$Component) {
         key: 'render',
         value: function render() {
 
+            this.errors.name = isError.checkName(this.state.name);
+            this.errors.price = isError.checkPrice(this.state.price);
+            this.errors.url = isError.checkUrl(this.state.url);
+            this.errors.quantity = isError.checkQuantity(this.state.quantity);
+
+            var errorCount = this.errors.name.length + this.errors.price.length + this.errors.url.length + this.errors.quantity.length;
+
             return React.createElement(
                 'div',
-                { className: "ProductCard" },
+                { className: 'ProductCard' },
                 React.createElement(
                     'h2',
                     null,
@@ -34016,58 +34029,90 @@ var ProductEditor = function (_React$Component) {
                     'p',
                     null,
                     'ID: ',
-                    this.props.code
+                    this.props.code,
+                    ' (name: ',
+                    this.state.name,
+                    ')'
                 ),
                 React.createElement(
                     'span',
                     null,
                     'Name: '
                 ),
+                // сообщение о невалидности
+                this.errors.name.length > 0 && React.createElement(
+                    'span',
+                    { className: 'nonvalid' },
+                    this.errors.name.join(' | ')
+                ),
                 React.createElement('input', {
                     type: 'text',
                     name: 'name',
                     onChange: this.changeHandler,
-                    value: this.state.name
+                    value: this.state.name,
+                    autoComplete: 'off'
                 }),
                 React.createElement(
                     'span',
                     null,
                     'Price: '
                 ),
+                // сообщение о невалидности
+                this.errors.price.length > 0 && React.createElement(
+                    'span',
+                    { className: 'nonvalid' },
+                    this.errors.price.join(' | ')
+                ),
                 React.createElement('input', {
                     type: 'text',
                     name: 'price',
                     onChange: this.changeHandler,
-                    value: this.state.price
+                    value: this.state.price,
+                    autoComplete: 'off'
                 }),
                 React.createElement(
                     'span',
                     null,
                     'URL: '
                 ),
+                // сообщение о невалидности
+                this.errors.url.length > 0 && React.createElement(
+                    'span',
+                    { className: 'nonvalid' },
+                    this.errors.url.join(' | ')
+                ),
                 React.createElement('input', {
                     type: 'text',
                     name: 'url',
                     onChange: this.changeHandler,
-                    value: this.state.url
+                    value: this.state.url,
+                    autoComplete: 'off'
                 }),
                 React.createElement(
                     'span',
                     null,
                     'Quantity: '
                 ),
+                // сообщение о невалидности
+                this.errors.quantity.length > 0 && React.createElement(
+                    'span',
+                    { className: 'nonvalid' },
+                    this.errors.quantity.join(' | ')
+                ),
                 React.createElement('input', {
                     type: 'text',
                     name: 'quantity',
                     onChange: this.changeHandler,
-                    value: this.state.quantity
+                    value: this.state.quantity,
+                    autoComplete: 'off'
                 }),
                 React.createElement('input', {
                     type: 'button',
                     name: 'save',
                     value: 'Save'
                     // TODO валидация
-                    , onClick: this.saveHandler
+                    , onClick: this.saveHandler,
+                    disabled: errorCount && true
                 }),
                 React.createElement('input', {
                     type: 'button',
@@ -34098,12 +34143,140 @@ module.exports = ProductEditor;
 
 /***/ }),
 /* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var checkName = function checkName(str) {
+  var err = [];
+  if (str.length === 0) err.push('Укажите название продукта');else if (str.trim().length === 0) err.push('Название продукта не может содержать только пробелы');
+
+  return err;
+};
+
+var checkPrice = function checkPrice(num) {
+  var err = [];
+  // в связи с тем, что при инициализации компонента поступают
+  // как положено __числа__ для стоимости и количества
+  // а при валидации происходит проверка строковых значений ->
+  // для единообразия поступающие числа преобразоваем в текст
+
+  // после проверки на валидность и сохранения данные карточки будут приводиться к требуемым типам 
+
+  if (typeof num === 'number') num = num.toString();
+
+  if (num.trim().length === 0) err.push('Укажите стоимость продукта в числовом выражении');else if (/[\,]/.test(num)) err.push('Вместо запятой используйте символ точки для отделения дробной части от целой');else if (isNaN(Number(num))) err.push('Укажите стоимость продукта в числовом выражении');else if (parseFloat(num) <= 0) err.push('Для стоимости необходимо указать положительное число больше нуля');
+
+  return err;
+};
+
+var checkUrl = function checkUrl(url) {
+  var err = [];
+  if (url.trim().length === 0) err.push('Укажите ссылку на изображение товара');else if (!createRegexByType('url').test(url)) err.push('Проверьте URL на ошибки и исправьте');
+
+  return err;
+};
+
+var checkQuantity = function checkQuantity(quantity) {
+  var err = [];
+
+  // в связи с тем, что при инициализации компонента поступают
+  // как положено __числа__ для стоимости и количества
+  // а при валидации происходит проверка строковых значений ->
+  // для единообразия поступающие числа преобразоваем в текст
+
+  // после проверки на валидность и сохранения данные карточки будут приводиться к требуемым типам 
+
+  if (typeof quantity === 'number') quantity = quantity.toString();
+
+  if (quantity.trim().length === 0) err.push('Укажите количества продукта в числовом выражении');else if (/[\.\,]/.test(quantity)) err.push('Для количества продукта принимаются только целые числа');else if (isNaN(Number(quantity))) err.push('Введите неотрицательное целое число');else if (parseFloat(quantity) < 0) err.push('В этой таблице количество не может быть отрицательным');
+
+  return err;
+};
+
+// возвращает объект регулярного выражения
+// в соответствии с переданным типом валидируемого поля
+var createRegexByType = function createRegexByType(fieldType) {
+  var reS = '';
+
+  if (fieldType === 'url') {
+    reS += '^'; // начало строки
+    reS += 'https?'; // обязательный протокол (с опциональным символом 's' в конце)
+    reS += '\\:\\/\\/'; // протокол последовательность символов ://
+    reS += '(w{3}\\.){0,1}'; // 0 или 1 раз повторяющаяся последовательность из 3 символов 'w', заканчивающаяся точкой
+
+    reS += '(?:'; // опциональная группа без захвата
+    reS += '[a-zа-я0-9]{1,63}\\.'; // доменное имя третьего уровня длиной от 1 до 63 символов, заканчивающееся точкой
+    reS += ')?'; //
+
+    reS += '[a-zа-я0-9]'; // первый символ имени домена второго уровня - последовательность символов букв, цифр, исключен знак тире
+    reS += '[a-zа-я0-9\\-]{0,61}'; // последовательность символов букв, цифр и тире длиной от 0 до 61
+    reS += '[a-zа-я0-9]'; // последний (второй из двух) символ имени домена второго уровня - последовательность символов букв, цифр, исключен знак тире
+    reS += '\\.'; // точка, отделяющая домен второго уровня от домена верхнего уровня
+    reS += '[a-zа-я]{2,18}'; // домен верхнего уровня длиной минимум 2 символа, максимум 18 символов (длиннее не нашел)
+    reS += '\\/?'; // необязательный слеш перед частью пути к ресурсу
+
+    reS += '(?:'; // группа без захвата с предопределенным количеством повторов
+    reS += '[a-zа-я0-9_\\-]{1,50}'; // название части пути к ресурсу длиной от 1 до 50 символов (50 взял навскидку)
+    reS += '\\/?'; // необязательный слеш после части пути к ресурсу. при отстутствии имени ресурса - закрывает URL
+    reS += '){0,2}'; // задаю глубину вложенности ресурса в диапазоне от 0 до 2
+
+    reS += '(?:'; // опциональная группа без захвата
+    reS += '[a-zа-я0-9_\\-]{1,50}'; // название ресурса от 1 до 50 символов длиной из букв, цифр, подчеркивания или тире
+    reS += '\\.'; // точка, разделяющая имя и расширение ресурса
+    reS += '(html|htm|php|asp|jsp|jpg|jpeg|png|gif|webp)'; // вот это вот лишнее, ввел чтобы применить оператор ИЛИ
+    reS += ')?'; //
+
+    reS += '$'; // конец строки
+  } else if (fieldType === 'email') {
+    reS += '^'; // начало строки
+    reS += '[a-z0-9_\\-\\.]+'; // имя ящика - один и более символов из цифр, латинских букв или знаки ._-
+    reS += '@'; // отделяет название ящика от доменного имени
+
+    reS += '(?:'; // группа без захвата с предопределенным количеством повторов
+    reS += '[a-z0-9\\-]+\\.'; // доменное имя с точкой в конце
+    reS += '){1,2}'; // доменное имя может быть ограничено третьим уровнен
+    reS += '[a-z0-9]{2,}$'; // доменное имя верхнего уровня длиной от 2-х цифр или латинских букв
+
+    reS += '$'; // конец строки
+  } else if (fieldType === 'double-special') {
+    reS += '([_\\.\\-])(?:\\1)'; // находит два стоящих подряд нижнех подчеркивания или тире
+  } else if (fieldType === 'domain') {
+    reS += '(?:'; // группа БЕЗ захвата с предопределенным количеством повторов
+    reS += 'w{3}\\.'; // www с точкой в конце
+    reS += '){0,1}'; // ноль или одно повторение
+
+    reS += '(?:'; // группа БЕЗ захвата
+    reS += '[a-zа-я0-9]{1,63}\\.'; // доменное имя третьего уровня длиной от 1 до 63 символов, заканчивающееся точкой
+    reS += ')?';
+
+    reS += '('; // группа с захватом (искомый домен)
+    reS += '[a-zа-я0-9]'; // первая буква доменного имени (не может быть тире)
+    reS += '[a-zа-я0-9\\-]{0,61}'; // продложение домена второго уровня
+    reS += '[a-zа-я0-9]\\.'; // заключительная буква доменного имени (не может быть тире) с точкой в конце
+    reS += '[a-zа-я]{2,18}'; // TLD
+    reS += ')';
+  }
+
+  return new RegExp(reS, 'i'); // ! нечувствительность к регистру в флаге 'i'
+};
+
+module.exports.isError = {
+  checkName: checkName,
+  checkPrice: checkPrice,
+  checkUrl: checkUrl,
+  checkQuantity: checkQuantity
+};
+
+/***/ }),
+/* 34 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports) {
 
 module.exports = [{"name":"product1","price":30,"url":"http://aaa.com","quantity":20},{"name":"product2","price":40,"url":"http://bbb.com","quantity":15},{"name":"newproduct3","price":80,"url":"http://ccc.com","quantity":49},{"name":"product4","price":90,"url":"http://ddd.com","quantity":8},{"name":"product5","price":120,"url":"http://eee.com","quantity":22},{"name":"product6","price":50,"url":"http://fff.com","quantity":3}]

@@ -75,12 +75,11 @@ class ProductTable extends React.Component {
         });
     };
 
-    unsavedHandler = (flag) => {
-        if (flag !== this.state.unsaved) {
-            this.setState({
-                unsaved: flag
-            });
-        }
+    unsavedHandler = (boolFlag) => {
+        // режим запрещающего курсора и блокировки контролов таблицы товаров
+        this.setState({
+            unsaved: boolFlag, 
+        });
     };
 
     saveHandler = (recordH) => {
