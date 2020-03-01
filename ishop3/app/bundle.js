@@ -33817,9 +33817,9 @@ var ProductRecord = function (_React$Component) {
                     'td',
                     null,
                     React.createElement('input', { type: 'button', onClick: this.props.cbOnEdit && this.editHandler,
-                        value: 'Edit' }),
+                        value: 'Edit', disabled: this.props.disableControls }),
                     React.createElement('input', { type: 'button', onClick: this.props.cbOnDelete && this.deleteHandler,
-                        value: 'Delete' })
+                        value: 'Delete', disabled: this.props.disableControls })
                 )
             );
         }

@@ -72,9 +72,9 @@ class ProductRecord extends React.Component {
                 <td>{ this.props.quantity }</td>
                 <td> 
                     <input type='button' onClick={ this.props.cbOnEdit && this.editHandler }
-                        value={ 'Edit' }/>
+                        value={ 'Edit' } disabled={ this.props.disableControls }/>
                     <input type='button' onClick={ this.props.cbOnDelete && this.deleteHandler }
-                        value={ 'Delete' }/>
+                        value={ 'Delete' } disabled={ this.props.disableControls }/>
                 </td>
             </tr>
         );
