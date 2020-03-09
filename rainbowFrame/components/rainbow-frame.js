@@ -1,12 +1,29 @@
 const React = require('react');
-const {Fragment} = require('react');
+const PropTypes = require('prop-types');
 
-require('./style.css');
+const ColorFrame = require('./color-frame');
 
-module.exports = props => {
-  let words = props.text.split(/<br\s?\/?>/g);
-  let jsxWords = words.map((val, index) => <Fragment key={index}><span>{val}</span><br/></Fragment>);
-  return (
-    <div className="BR2jsx">{jsxWords}</div>
-  );
-};
+const RainbowFrame = props => {
+  let colors = props.colors.slice();
+  let nextColor = colors.pop();
+
+  if (!nextColor) return 'Ошибка! Передан пустой массив цветов!';
+  else return (
+    <ColorFrame color={nextColor}>
+      {
+        (colors.length>0) ?
+          <RainbowFrame colors={colors}>
+            {props.children}
+          </RainbowFrame>
+          :
+          props.children
+      }
+    </ColorFrame>
+  )
+}
+
+RainbowFrame.propTypes = {
+  colors: PropTypes.array,
+}
+
+module.exports = RainbowFrame;

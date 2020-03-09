@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const React = require('react');
-const ReactDOM = require('react-dom');
+const React = require("react");
+const ReactDOM = require("react-dom");
 
-const BR2jsx = require('./components/br2jsx');
+const RainbowFrame = require("./components/rainbow-frame");
 
-let text = 'первый<br>второй<br/>третий<br />последний';
+let colors = ["red", "orange", "yellow", "green", "#00BFFF", "blue", "purple"];
 
 ReactDOM.render(
-  <BR2jsx text={text}/>
-  , document.getElementById('container') 
+  <RainbowFrame colors={colors}>Hello!</RainbowFrame>,
+  document.getElementById("container")
 );
