@@ -18,6 +18,7 @@ function withRainbowFrame(props) {
       <ColorFrame color={nextColor}>
         {
           (colors.length>0) ?
+            withRainbowFrame(colors)
             <Component colors={colors}>
               {props.children}
             </Component>
