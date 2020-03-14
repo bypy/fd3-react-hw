@@ -1,5 +1,4 @@
 const React = require('react');
-const {Fragment} = require('react');
 
 require('./style.css');
 
