@@ -4,7 +4,7 @@ const {Fragment} = require('react');
 require('./style.css');
 
 module.exports = props => {
-  let words = props.text.split(/<br\s?\/?>/g);
+  let words = props.text.split(/<br *\/?>/gi);
   let jsxWords = words.map((val, index) => {
     if (index < words.length-1 )
       return <Fragment key={index}>{val}<br/></Fragment>
