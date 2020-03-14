@@ -1,33 +1,17 @@
-const React = require('react');
-const PropTypes = require('prop-types');
+const React = require("react");
 
-const ColorFrame = require('./color-frame');
+const ColorFrame = require("./color-frame");
 
-function withRainbowFrame(props) {
-  let colors = props;
-  let Component = this;
-
-  return function(props) {
-    let nextColor = colors.pop();
-
-    // Component.propTypes = {
-    //   colors: PropTypes.array,
-    // }
-
-    return (
-      <ColorFrame color={nextColor}>
-        {
-          (colors.length>0) ?
-            withRainbowFrame(colors)
-            <Component colors={colors}>
-              {props.children}
-            </Component>
-            :
-            props.children
-        }
-      </ColorFrame>
-    )
-  }
+function withRainbowFrame(colors) {
+  return function(PassedComponent) {
+    return function(props) {
+      let result = <PassedComponent {...props}/>;
+      colors.forEach(c => {
+        result = <ColorFrame color={c}>{result}</ColorFrame>;
+      });
+      return result;
+    };
+  };
 }
 
 module.exports = withRainbowFrame;
